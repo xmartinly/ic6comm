@@ -15,11 +15,11 @@ QStatusBar {
    background: transparent;
    border-top:1px solid #999999;
 }
-QStatusBar::item QLabel {
+/*QStatusBar::item QLabel {
     font-size: 12px;
-    color: #2E598A;
+    color: #5B5B5B;
     font-weight: bold;
-}
+}*/
 /* =============================================== */
 /* QSlider                                         */
 /* =============================================== */
@@ -100,7 +100,6 @@ QScrollBar::handle:hover {
 QScrollBar::sub-line {
     background: transparent;
 }
-
 QScrollBar::add-line {
     background: transparent;
 }
@@ -149,29 +148,32 @@ QProgressBar::chunk {
 /* QTableWidget                                    */
 /* =============================================== */
 QTableWidget {
-    border: 1px dashed #2196F3;
+    border: 1px dashed #5B5B5B;
+/*    border: none;*/
     margin-right: 5px;
 }
 
 QListView, QTableView {
-    border: 1px dashed #2196F3;
+    border: 1px dashed #5B5B5B;
 }
 
 QHeaderView::section, QTableCornerButton:section {
     padding: 3px;
     margin: 5px;
-    color: #DCDCDC;
+    color: #FAFAFA;
     border: 1px solid #242424;
     border-left-width: 0px;
     border-right-width: 1px;
     border-top-width: 0px;
     border-bottom-width: 1px;
     /*background: qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #646464,stop:1 #525252);*/
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2E598A, stop:1 #E12E598A);
+/*    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2E598A, stop:1 #E12E598A);*/
+    background: #5B5B5B;
 }
 
 QTableWidget::item:selected {
-    background-color:#2E598A
+    background-color:#808080;
+    color: #FDFDFD;
 }
 
 
@@ -187,10 +189,11 @@ QLabel {
 /* A QToolTip is a QLabel ... */
 QToolTip {
     border: none;
-    color: #FFFFFF;
+    color: #FDFDFD;
     font-weight: bold;
     font-size: 14px;
-    background: #2E598A;
+    /* background: #2E598A; */
+    background-color: #646464;
     padding: 5px;
     opacity: 225;
 }
@@ -199,7 +202,7 @@ QToolTip {
 /* MenuBar Menu                                    */
 /* =============================================== */
 QMenuBar {
-    background-color: #393E46;
+    background-color: #5B5B5B;
     color: #FDFDFD;
     spacing: 1px;
     border-bottom: 1px solid #999999;
@@ -212,14 +215,15 @@ QMenuBar::item {
 }
 
 QMenuBar::item:selected {
-    background: #222831;
+    background: #242424;
+    color: #FDFDFD;
     border: none;
 }
 
 
 QMenu {
-    background-color: #393E46;
-    color: #E1E1E1;
+    background-color: #5B5B5B;
+    color: #FDFDFD;
     margin: 1px;
     /* some spacing around the menu */
     padding: 1px;
@@ -235,8 +239,8 @@ QMenu::item {
 
 QMenu::item:selected {
     border: none;
-        background-color: #1E1E1E;
-        color: #FFFFFF;
+        background-color: #808080;
+        color: #FDFDFD;
 }
 
 
@@ -264,7 +268,7 @@ QToolButton:hover {
 }
 
 QToolButton:pressed {
-    background: #E1E1E1;
+    background: #DDDDDD;
 }
 
 /* =============================================== */
@@ -272,7 +276,7 @@ QToolButton:pressed {
 /* =============================================== */
 QPushButton {
     /*background-color: #2E598A;*/
-    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2E598A, stop:1 #E12E598A);
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #5B5B5B, stop:1 #808080);
     color: #FDFDFD;
     border: none;
     height: 25px;
@@ -281,18 +285,18 @@ QPushButton {
 }
 
 QPushButton:disabled {
-    background-color: #999999;
+    background-color: #DDDDDD;
     color: #FDFDFD
 }
 
 QPushButton:hover {
-    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2196F3, stop:1 #2E598A);
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #808080, stop:1 #5B5B5B);
     color: #FDFDFD;
 }
 
 QPushButton:pressed {
-    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2E598A, stop:1 #E12E598A);
-    color: #E1E1E1;
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #646464, stop:1 #808080);
+    color: #DDDDDD;
 }
 
 /* =============================================== */

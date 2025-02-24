@@ -42,10 +42,10 @@ class IC6Comm : public QMainWindow {
   private:
     Ui::IC6Comm* ui;
     // 加载 SVG 图标
-    QIcon startIcon = QIcon(":/Picture/svg/wm_play.svg"); // 开始图标
-    QIcon stopIcon = QIcon(":/Picture/svg/wm_stop.svg"); // 停止
-    QIcon restartIcon = QIcon(":/Picture/svg/wm_restart.svg"); // 重启
-    QIcon deleteIcon = QIcon(":/Picture/svg/wm_trash_can.svg"); // 删除
+    QIcon startIcon = QIcon(":/Picture/svg/wm_play_w.svg"); // 开始图标
+    QIcon stopIcon = QIcon(":/Picture/svg/wm_stop_w.svg"); // 停止
+    QIcon restartIcon = QIcon(":/Picture/svg/wm_restart_w.svg"); // 重启
+    QIcon deleteIcon = QIcon(":/Picture/svg/wm_trash_can_w.svg"); // 删除
 
 
 
