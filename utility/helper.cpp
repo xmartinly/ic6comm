@@ -30,22 +30,22 @@ bool Helper::chksumVerify(const QByteArray& msg, uint cks) {
 /// \param QString s
 /// \return CygEnums::CommandGroup
 ///
-CygEnums::CommandGroup Helper::calcCmdGroup(const QString& s) {
-    //SS: 83083
-    //SG: 83071
-    //SL: 83076
-    //RL: 82076
-    //RG: 82071
-    //UG: 85071
-    //QG: 81071
-    if(s.length() != 2) {
-        return CygEnums::StatusMsg;
-    }
-    QByteArray ba_cmd = s.toUtf8();
-    uint cmd_idx = (ba_cmd.at(0) * 1000 + ba_cmd.at(1));
-    qDebug() << s << cmd_idx;
-    return static_cast<CygEnums::CommandGroup>(cmd_idx);
-}
+// CygEnums::CommandGroup Helper::calcCmdGroup(const QString& s) {
+//     //SS: 83083
+//     //SG: 83071
+//     //SL: 83076
+//     //RL: 82076
+//     //RG: 82071
+//     //UG: 85071
+//     //QG: 81071
+//     if(s.length() != 2) {
+//         return CygEnums::StatusMsg;
+//     }
+//     QByteArray ba_cmd = s.toUtf8();
+//     uint cmd_idx = (ba_cmd.at(0) * 1000 + ba_cmd.at(1));
+//     qDebug() << s << cmd_idx;
+//     return static_cast<CygEnums::CommandGroup>(cmd_idx);
+// }
 
 ///
 /// \brief Helper::calcMsgLen. calculate message length.
@@ -127,66 +127,66 @@ qint64 Helper::maxFileSize() {
 ///
 QByteArray Helper::msgBuilder(const QString& group, uint id, uint chs) {
     QByteArray ba_cmd = group.toUtf8();
-    ba_cmd.append(id);
-    CygEnums::CommandGroup cmd_group = Helper::calcCmdGroup(group);
-    if(cmd_group == CygEnums::RemoteMatl
-            || cmd_group == CygEnums::StatusMatl
-            || cmd_group == CygEnums::UpdateGen
-            || cmd_group == CygEnums::StatusSnsr) {
-        ba_cmd.append(chs);
-    }
+    // ba_cmd.append(id);
+    // CygEnums::CommandGroup cmd_group = Helper::calcCmdGroup(group);
+    // if(cmd_group == CygEnums::RemoteMatl
+    //         || cmd_group == CygEnums::StatusMatl
+    //         || cmd_group == CygEnums::UpdateGen
+    //         || cmd_group == CygEnums::StatusSnsr) {
+    //     ba_cmd.append(chs);
+    // }
     // ba_cmd.append(chs);
     return ba_cmd;
 }
 
-QStringList Helper::listConfigFile(CygEnums::FileCatalog catalog) {
-    QStringList sl_files;
-    QString file_dir = QCoreApplication::applicationDirPath() + (catalog == CygEnums::Recipe ? RECIPES_FOLER : CONNECTIONS_FOLDER);
-    QDir dir(file_dir);
-    if (!dir.exists()) {
-        return sl_files;
-    }
-    dir.setFilter(QDir::Dirs | QDir::Files);
-    dir.setSorting(QDir::DirsFirst);
-    QFileInfoList files = dir.entryInfoList();
-    foreach (QFileInfo fi, files) {
-        if (fi.fileName() == "." || fi.fileName() == "..") {
-            continue;
-        }
-        if (fi.isDir()) {
-            continue;
-        } else {
-            QString s_filePath = fi.filePath();
-            int i_slashIdx = s_filePath.lastIndexOf('/');
-            int i_dotIdx = s_filePath.lastIndexOf('.');
-            sl_files << s_filePath.mid(i_slashIdx + 1, i_dotIdx - i_slashIdx - 1);
-        }
-    }
-    sl_files.sort();
-    return sl_files;
-}
+// QStringList Helper::listConfigFile(CygEnums::FileCatalog catalog) {
+//     QStringList sl_files;
+//     QString file_dir = QCoreApplication::applicationDirPath() + (catalog == CygEnums::Recipe ? RECIPES_FOLER : CONNECTIONS_FOLDER);
+//     QDir dir(file_dir);
+//     if (!dir.exists()) {
+//         return sl_files;
+//     }
+//     dir.setFilter(QDir::Dirs | QDir::Files);
+//     dir.setSorting(QDir::DirsFirst);
+//     QFileInfoList files = dir.entryInfoList();
+//     foreach (QFileInfo fi, files) {
+//         if (fi.fileName() == "." || fi.fileName() == "..") {
+//             continue;
+//         }
+//         if (fi.isDir()) {
+//             continue;
+//         } else {
+//             QString s_filePath = fi.filePath();
+//             int i_slashIdx = s_filePath.lastIndexOf('/');
+//             int i_dotIdx = s_filePath.lastIndexOf('.');
+//             sl_files << s_filePath.mid(i_slashIdx + 1, i_dotIdx - i_slashIdx - 1);
+//         }
+//     }
+//     sl_files.sort();
+//     return sl_files;
+// }
 
-void Helper::delConfigFile(const QString& file_name, CygEnums::FileCatalog catalog) {
-    QString file_path = QCoreApplication::applicationDirPath() + (catalog == CygEnums::Recipe ? RECIPES_FOLER : CONNECTIONS_FOLDER) + file_name + ".ini";
-    QFile file(file_path);
-    if (file.exists()) {
-        file.remove();
-    }
-}
+// void Helper::delConfigFile(const QString& file_name, CygEnums::FileCatalog catalog) {
+//     QString file_path = QCoreApplication::applicationDirPath() + (catalog == CygEnums::Recipe ? RECIPES_FOLER : CONNECTIONS_FOLDER) + file_name + ".ini";
+//     QFile file(file_path);
+//     if (file.exists()) {
+//         file.remove();
+//     }
+// }
 
-QMap<QString, QString> Helper::readConfigFile(const QString& file_name, CygEnums::FileCatalog catalog) {
-    QString file_path = QCoreApplication::applicationDirPath() + (catalog == CygEnums::Recipe ? RECIPES_FOLER : CONNECTIONS_FOLDER) + file_name + ".ini";
-    QSettings ini_file(file_path, QSettings::IniFormat);
-    QMap<QString, QString> settings;
-    QFile file(file_path);
-    if (!file.exists()) {
-        return settings;
-    }
-    foreach (auto field, RECIPE_FIELDS) {
-        settings.insert(field, ini_file.value(field).toString());
-    }
-    return settings;
-}
+// QMap<QString, QString> Helper::readConfigFile(const QString& file_name, CygEnums::FileCatalog catalog) {
+//     QString file_path = QCoreApplication::applicationDirPath() + (catalog == CygEnums::Recipe ? RECIPES_FOLER : CONNECTIONS_FOLDER) + file_name + ".ini";
+//     QSettings ini_file(file_path, QSettings::IniFormat);
+//     QMap<QString, QString> settings;
+//     QFile file(file_path);
+//     if (!file.exists()) {
+//         return settings;
+//     }
+//     foreach (auto field, RECIPE_FIELDS) {
+//         settings.insert(field, ini_file.value(field).toString());
+//     }
+//     return settings;
+// }
 
 
 ///

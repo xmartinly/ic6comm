@@ -11,12 +11,14 @@ CONFIG += c++17
 SOURCES += \
       main.cpp \
     ic6_comm.cpp \
-    thirdparty/ipaddress.cpp
+    thirdparty/ipaddress.cpp \
+    utility/helper.cpp
 
 HEADERS += \
        stable.h \
     ic6_comm.h \
-    thirdparty/ipaddress.h
+    thirdparty/ipaddress.h \
+    utility/helper.h
 
 FORMS += \
     ic6_comm.ui

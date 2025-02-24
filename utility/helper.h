@@ -1,7 +1,6 @@
 ﻿#ifndef HELPER_H
 #define HELPER_H
 
-using namespace Utility;
 
 class Helper {
   public:
@@ -11,7 +10,7 @@ class Helper {
 
     static bool chksumVerify(const QByteArray& msg, uint cks);
 
-    static CygEnums::CommandGroup calcCmdGroup(const QString& s);
+    // static CygEnums::CommandGroup calcCmdGroup(const QString& s);
 
     static uint calcMsgLen(const QByteArray& len_ba);
 
@@ -39,11 +38,11 @@ class Helper {
 
     static int calcInt(const QByteArray& resp);
 
-    static QStringList listConfigFile(CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
+    // static QStringList listConfigFile(CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
 
-    static void delConfigFile(const QString& file_name, CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
+    // static void delConfigFile(const QString& file_name, CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
 
-    static QMap<QString, QString> readConfigFile(const QString& file_name, CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
+    // static QMap<QString, QString> readConfigFile(const QString& file_name, CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
 
     static QByteArray BA_HELLO;
     static qint64 MAX_RUNNING_TIME;

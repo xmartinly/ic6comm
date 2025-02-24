@@ -6,158 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>926</width>
-    <height>654</height>
+    <width>1000</width>
+    <height>760</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>760</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>IC6Comm</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout" rowstretch="1,99">
-    <item row="0" column="3">
-     <widget class="QComboBox" name="comboBox">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>30</height>
-       </size>
-      </property>
-      <item>
-       <property name="text">
-        <string>100</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>200</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>500</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1000</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2000</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="0" column="10">
-     <widget class="QToolButton" name="tb_stop">
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Stop all</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="facade/res.qrc">
-        <normaloff>:/Picture/svg/wm_stop.svg</normaloff>:/Picture/svg/wm_stop.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>36</width>
-        <height>36</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="13">
-     <widget class="QSplitter" name="splitter">
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="handleWidth">
-       <number>1</number>
-      </property>
-      <widget class="QTableWidget" name="tbl_list"/>
-      <widget class="QTableWidget" name="tbl_detail"/>
-     </widget>
-    </item>
-    <item row="0" column="11">
-     <widget class="QToolButton" name="tb_restart">
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Restart all</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="facade/res.qrc">
-        <normaloff>:/Picture/svg/wm_restart.svg</normaloff>:/Picture/svg/wm_restart.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>36</width>
-        <height>36</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="IPAddress" name="widget" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>280</width>
-        <height>25</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_4">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Interval:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="9">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="1,999">
+    <item row="0" column="8">
      <widget class="QToolButton" name="tb_start">
       <property name="minimumSize">
        <size>
@@ -189,7 +53,125 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="3">
+     <widget class="QComboBox" name="comboBox">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <item>
+       <property name="text">
+        <string>100</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>200</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>500</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1000</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2000</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Interval:</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="6">
+     <widget class="QToolButton" name="tb_new">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Add new IC/6</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="facade/res.qrc">
+        <normaloff>:/Picture/svg/wm_new_copy.svg</normaloff>:/Picture/svg/wm_new_copy.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>36</width>
+        <height>36</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>IP:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="13">
+     <widget class="QSplitter" name="splitter">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>1</number>
+      </property>
+      <widget class="QTableWidget" name="tbl_list"/>
+      <widget class="QTableWidget" name="tbl_detail"/>
+     </widget>
+    </item>
+    <item row="0" column="12">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>10</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="5">
      <widget class="QLineEdit" name="lineEdit">
       <property name="minimumSize">
        <size>
@@ -197,27 +179,108 @@
         <height>30</height>
        </size>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="minimumSize">
+      <property name="maximumSize">
        <size>
-        <width>0</width>
-        <height>35</height>
+        <width>16777215</width>
+        <height>30</height>
        </size>
       </property>
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
+     </widget>
+    </item>
+    <item row="0" column="9">
+     <widget class="QToolButton" name="tb_stop">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Stop all</string>
       </property>
       <property name="text">
-       <string>IP:</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="facade/res.qrc">
+        <normaloff>:/Picture/svg/wm_stop.svg</normaloff>:/Picture/svg/wm_stop.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>36</width>
+        <height>36</height>
+       </size>
       </property>
      </widget>
     </item>
-    <item row="0" column="12">
+    <item row="0" column="10">
+     <widget class="QToolButton" name="tb_restart">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Restart all</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="facade/res.qrc">
+        <normaloff>:/Picture/svg/wm_restart.svg</normaloff>:/Picture/svg/wm_restart.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>36</width>
+        <height>36</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="7">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="1">
+     <widget class="IPAddress" name="widget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>30</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="11">
      <widget class="QToolButton" name="tb_folder">
       <property name="minimumSize">
        <size>
@@ -251,79 +314,10 @@
     </item>
     <item row="0" column="4">
      <widget class="QLabel" name="label_3">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>35</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>ms</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QLabel" name="label_5">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>35</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
-      </property>
       <property name="text">
        <string>Prefix:</string>
       </property>
      </widget>
-    </item>
-    <item row="0" column="7">
-     <widget class="QToolButton" name="tb_new">
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Add new IC/6</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="facade/res.qrc">
-        <normaloff>:/Picture/svg/wm_new_copy.svg</normaloff>:/Picture/svg/wm_new_copy.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>36</width>
-        <height>36</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="8">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>
@@ -332,7 +326,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>926</width>
+     <width>1000</width>
      <height>20</height>
     </rect>
    </property>
