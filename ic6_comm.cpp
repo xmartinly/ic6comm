@@ -10,6 +10,8 @@ IC6Comm::IC6Comm(QWidget* parent)
     setStatusbar();
     statusBar()->showMessage("ShowMessage", 2000);
     initListTble();
+    // This is available in all editors.
+    // qDebug() << __FUNCTION__ << Helper::calcCks(data_);
 }
 
 IC6Comm::~IC6Comm() {

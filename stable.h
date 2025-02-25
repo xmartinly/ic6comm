@@ -58,5 +58,7 @@
 
 #include <QDebug>
 
+#include "utility/helper.h"
+
 
 #endif // STABLE_H

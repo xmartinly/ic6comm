@@ -1,6 +1,7 @@
 ﻿#include "utility\helper.h"
 
 QByteArray Helper::BA_HELLO = QByteArray::fromHex("0200480149");
+QByteArray Helper::BA_SNRDATA = QByteArray::fromHex("0C00535303005353040053530500FE");
 qint64 Helper::MAX_RUNNING_TIME = 2592000;
 qint64 Helper::MAX_FILE_SIZE = 1024 * 1024 * 10;
 QString Helper::RECIPES_FOLER = "/recipes/";
@@ -100,6 +101,14 @@ QByteArray Helper::calcCmdLen(const QByteArray& ba_cmd) {
 ///
 QByteArray Helper::helloMsg() {
     return BA_HELLO;
+}
+
+///
+/// \brief Helper::helloMsg. H1 message
+/// \return QByteArray
+///
+QByteArray Helper::SnrData() {
+    return BA_SNRDATA;
 }
 
 ///

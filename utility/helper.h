@@ -45,6 +45,7 @@ class Helper {
     // static QMap<QString, QString> readConfigFile(const QString& file_name, CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
 
     static QByteArray BA_HELLO;
+    static QByteArray BA_SNRDATA;
     static qint64 MAX_RUNNING_TIME;
     static qint64 MAX_FILE_SIZE;
     static QString RECIPES_FOLER;
@@ -54,6 +55,9 @@ class Helper {
     const double ic6_freq_const_ = 0.000873114913702011;
     static QStringList RECIPE_FIELDS;
     static QStringList CONN_FIELDS;
+
+    // QByteArray hello_ = QByteArray::fromHex("0200480149");
+    // QByteArray data_ = QByteArray::fromHex("0C00535303005353040053530500FE");
 
     QMap<QString, QString> cmd_map = {
         {"QueryGen", "QG"},

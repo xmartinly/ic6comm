@@ -47,7 +47,7 @@ class IC6Comm : public QMainWindow {
     QIcon restartIcon = QIcon(":/Picture/svg/wm_restart_w.svg"); // 重启
     QIcon deleteIcon = QIcon(":/Picture/svg/wm_trash_can_w.svg"); // 删除
 
-
+    QByteArray data_ = QByteArray::fromHex("535303005353040053530500");
 
   private:
     void setStatusbar();

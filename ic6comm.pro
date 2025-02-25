@@ -9,12 +9,14 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    comm_worker.cpp \
       main.cpp \
     ic6_comm.cpp \
     thirdparty/ipaddress.cpp \
     utility/helper.cpp
 
 HEADERS += \
+    comm_worker.h \
        stable.h \
     ic6_comm.h \
     thirdparty/ipaddress.h \
