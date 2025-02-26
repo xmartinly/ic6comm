@@ -19,6 +19,7 @@ class Helper {
     static QByteArray calcCmdLen(const QByteArray& ba_cmd);
 
     static QByteArray helloMsg();
+    static QByteArray SnrData();
     static qint64 maxRunningTime();
     static qint64 maxFileSize();
 

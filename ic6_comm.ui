@@ -265,7 +265,7 @@
      </spacer>
     </item>
     <item row="0" column="1">
-     <widget class="IPAddress" name="widget" native="true">
+     <widget class="IPAddress" name="wd_ip" native="true">
       <property name="minimumSize">
        <size>
         <width>300</width>

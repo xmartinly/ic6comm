@@ -10,6 +10,7 @@ QStringList Helper::RECIPE_FIELDS = {"Commands", "Duration", "Interval", "Sensor
 QStringList Helper::CONN_FIELDS = {"Commands", "Duration", "Interval", "Sensors", "Materials", "Save"};
 
 Helper::Helper() {
+    // 53 00 00 FA 06 80 81 81 80 81 81 06 C0 C6 76 77 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 DC 4B 77 77 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06 14 03 00 00 00 00 00 00 00 00 00 00 12 03 00 00 00 00 00 00 00 00 00 00 C6
 }
 
 Helper::~Helper() {

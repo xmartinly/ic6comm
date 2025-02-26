@@ -10,12 +10,16 @@ IC6Comm::IC6Comm(QWidget* parent)
     setStatusbar();
     statusBar()->showMessage("ShowMessage", 2000);
     initListTble();
-    // This is available in all editors.
-    // qDebug() << __FUNCTION__ << Helper::calcCks(data_);
+    ui->wd_ip->setIP("172.16.6.78");
+    worker_thread_ = new QThread(this);
+    worker_thread_->deleteLater();
 }
 
 IC6Comm::~IC6Comm() {
     // ui->tbl_list.widget
+    // worker_thread_->terminate();
+    worker_thread_ = nullptr;
+    delete worker_thread_;
     delete ui;
 }
 
@@ -120,5 +124,22 @@ void IC6Comm::initListTble(const QStringList& sl_ips) {
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // 选中整行
     tableWidget->setContextMenuPolicy (Qt::CustomContextMenu);
     connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &IC6Comm::tblMenu);
+}
+
+void IC6Comm::getInstResp(const QByteArray& resp) {
+    // This is available in all editors.
+    qDebug() << __FUNCTION__ << resp;
+}
+
+
+void IC6Comm::on_tb_new_clicked() {
+    QString ip = ui->wd_ip->getIP();
+    QByteArray ba_hello = Helper::helloMsg();
+    CommWorker* worker = new CommWorker();
+    worker->start();
+    worker->connectInst(ip);
+    worker->setNewIntlv(1000);
+    worker->setCmd(Helper::BA_HELLO);
+    worker->acqCtrl(false);
 }
 

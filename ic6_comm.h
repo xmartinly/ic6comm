@@ -2,6 +2,7 @@
 #define IC6_COMM_H
 
 #include <QMainWindow>
+#include "comm_worker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -39,6 +40,8 @@ class IC6Comm : public QMainWindow {
 
     void tblMenu(const QPoint pos);
 
+    void on_tb_new_clicked();
+
   private:
     Ui::IC6Comm* ui;
     // 加载 SVG 图标
@@ -49,9 +52,14 @@ class IC6Comm : public QMainWindow {
 
     QByteArray data_ = QByteArray::fromHex("535303005353040053530500");
 
+    QThread* worker_thread_ = nullptr;
+
   private:
     void setStatusbar();
     void initListTble(const QStringList& sl_ips = {});
+
+  public slots:
+    void getInstResp(const QByteArray& resp);
 
 };
 #endif // IC6_COMM_H
