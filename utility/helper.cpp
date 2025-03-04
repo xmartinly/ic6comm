@@ -1,6 +1,8 @@
 ﻿#include "utility\helper.h"
 
 QByteArray Helper::BA_HELLO = QByteArray::fromHex("0200480149");
+//SS0300 SS0400 SS0500
+//sensor status, sensor freq, sensor act
 QByteArray Helper::BA_SNRDATA = QByteArray::fromHex("0C00535303005353040053530500FE");
 qint64 Helper::MAX_RUNNING_TIME = 2592000;
 qint64 Helper::MAX_FILE_SIZE = 1024 * 1024 * 10;
@@ -79,6 +81,31 @@ uint Helper::calcCks(const QByteArray& ba_msg) {
     }
     cks_ &= 0xff;
     return cks_;
+}
+
+void Helper::calcData(const QByteArray& data) {
+    int stat_len = 8;
+    int freq_len = 64;
+    int act_len = 32;
+    if(data.length() != 107) {
+        return;
+    }
+    QByteArray ba_status = data.mid(1, stat_len);
+    QByteArray ba_freq = data.mid(10, freq_len);
+    QByteArray ba_act = data.mid(75, act_len);
+    // This is available in all editors.
+    QList<int> acts;
+    QStringList stats = calcStatus(ba_status);
+    QList<float> freqs;
+    // qDebug() << __FUNCTION__ << ba_status.toHex();
+    for (int var = 0; var < 8; ++var) {
+        QByteArray act = ba_act.mid(var * 4, 4);
+        QByteArray freq = ba_freq.mid(var * 8, 8);
+        acts.append(calcInt(act));
+        freqs.append(calcFreq(freq));
+    }
+    // This is available in all editors.
+    qDebug() << __FUNCTION__ << acts << freqs << stats;
 }
 
 ///
@@ -318,6 +345,18 @@ int Helper::calcInt(const QByteArray& resp) {
     int value;
     stream >> value;
     return value;
+}
+
+QStringList Helper::calcStatus(const QByteArray& stat) {
+    QStringList status = {};
+    if(stat.length() != 8) {
+        return status;
+    }
+    foreach (auto c, stat) {
+        bool is_failed = c & 1;
+        status.push_back(is_failed ? "NG" : "OK");
+    }
+    return status;
 }
 
 

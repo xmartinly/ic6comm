@@ -2,6 +2,7 @@
 #define IC6_COMM_H
 
 #include <QMainWindow>
+
 #include "comm_worker.h"
 
 QT_BEGIN_NAMESPACE
@@ -17,13 +18,6 @@ class IC6Comm : public QMainWindow {
     IC6Comm(QWidget* parent = nullptr);
     ~IC6Comm();
 
-    enum BtnOp {
-        StartBtn,
-        StopBtn,
-        RestartBtn,
-        RemoveBtn
-    };
-
   private slots:
     void on_act_comm_setting_triggered();
 
@@ -35,31 +29,44 @@ class IC6Comm : public QMainWindow {
 
     void on_act_lang_triggered();
 
+    void on_tb_start1_clicked();
 
-    void handleOperationClick(int row, BtnOp operation);
+    void on_tb_stop1_clicked();
 
-    void tblMenu(const QPoint pos);
+    void on_tb_view1_clicked();
 
-    void on_tb_new_clicked();
+    void on_tb_start2_clicked();
+
+    void on_tb_stop2_clicked();
+
+    void on_tb_view2_clicked();
 
   private:
     Ui::IC6Comm* ui;
-    // 加载 SVG 图标
-    QIcon startIcon = QIcon(":/Picture/svg/wm_play_w.svg"); // 开始图标
-    QIcon stopIcon = QIcon(":/Picture/svg/wm_stop_w.svg"); // 停止
-    QIcon restartIcon = QIcon(":/Picture/svg/wm_restart_w.svg"); // 重启
-    QIcon deleteIcon = QIcon(":/Picture/svg/wm_trash_can_w.svg"); // 删除
 
-    QByteArray data_ = QByteArray::fromHex("535303005353040053530500");
 
-    QThread* worker_thread_ = nullptr;
+
+    QMap<QString, CommWorker*> devices; // 存储设备对象
+    QVector<QThread*> threads; // 存储对应线程
+
+    bool inst1_conn_ = false;
+    bool inst2_conn_ = false;
+
 
   private:
     void setStatusbar();
     void initListTble(const QStringList& sl_ips = {});
+    void startAcq(const QString& ip, const QString& name, uint intvl = 200);
 
-  public slots:
-    void getInstResp(const QByteArray& resp);
+    bool connectTest(const QString& ip);
+
+  private slots:
+    void handleDataReceived(const QByteArray& data, const QString& name);
+    void handleError(const QString& error, const QString& ip);
+
+  signals:
+    void stopWorker();
+
 
 };
 #endif // IC6_COMM_H

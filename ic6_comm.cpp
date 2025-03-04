@@ -10,16 +10,16 @@ IC6Comm::IC6Comm(QWidget* parent)
     setStatusbar();
     statusBar()->showMessage("ShowMessage", 2000);
     initListTble();
-    ui->wd_ip->setIP("172.16.6.78");
-    worker_thread_ = new QThread(this);
-    worker_thread_->deleteLater();
+    ui->wd_ip1->setIP("172.16.6.136");
+    ui->wd_ip2->setIP("172.16.6.137");
 }
 
 IC6Comm::~IC6Comm() {
-    // ui->tbl_list.widget
-    // worker_thread_->terminate();
-    worker_thread_ = nullptr;
-    delete worker_thread_;
+    foreach (auto thread, threads) {
+        thread->quit();
+        thread->wait();
+        delete thread;
+    }
     delete ui;
 }
 
@@ -43,60 +43,44 @@ void IC6Comm::on_act_about_triggered() {
 void IC6Comm::on_act_lang_triggered() {
 }
 
-void IC6Comm::handleOperationClick(int row, BtnOp operation) {
-    QTableWidgetItem* ipItem = ui->tbl_list->item(row, 0);
-    QString click_str;
-    switch (operation) {
-        case StopBtn:
-            click_str = "Stop Click: ";
-            break;
-        case RestartBtn:
-            click_str = "Restart Click: ";
-            break;
-        case RemoveBtn:
-            click_str = "Remove Click: ";
-            break;
-        default:
-            click_str = "Start Click: ";
-            break;
-    }
-    if (ipItem) {
-        qDebug() << __FUNCTION__ << operation << click_str << ipItem->text();
-    }
+
+void IC6Comm::on_tb_start1_clicked() {
+    QString ip = ui->wd_ip1->getIP();
+    QString name = ui->le_name1->text();
+    uint intvl = ui->cb_intvl1->currentText().toUInt();
+    ui->wd_ip1->setDisabled(true);
+    ui->le_name1->setDisabled(true);
+    ui->cb_intvl1->setDisabled(true);
+    startAcq(ip, name, intvl);
 }
 
-void IC6Comm::tblMenu(const QPoint pos) {
-    QMenu* menu = new QMenu(ui->tbl_list);
-    QAction* startAction = menu->addAction(startIcon, "Start");
-    QAction* stopAction = menu->addAction(stopIcon, "Stop");
-    QAction* restartAction = menu->addAction(restartIcon, "Restart");
-    QAction* deleteAction = menu->addAction(deleteIcon, "Remove");
-    menu->addAction(startAction);
-    menu->addAction(stopAction);
-    menu->addAction(restartAction);
-    menu->addAction(deleteAction);
-    int x = pos.x ();
-    int y = pos.y ();
-    QModelIndex index = ui->tbl_list->indexAt (QPoint(x, y));
-    int row  = index.row ();
-    connect(startAction, &QAction::triggered, this, [this, row]() {
-        handleOperationClick(row, StartBtn);
-    });
-    connect(stopAction, &QAction::triggered, this, [this, row]() {
-        handleOperationClick(row, StopBtn);
-    });
-    connect(restartAction, &QAction::triggered, this, [this, row]() {
-        handleOperationClick(row, RestartBtn);
-    });
-    connect(deleteAction, &QAction::triggered, this, [this, row]() {
-        handleOperationClick(row, RemoveBtn);
-        ui->tbl_list->removeRow(row);
-    });
-    menu->move(cursor().pos ());
-    menu->show();
+void IC6Comm::on_tb_start2_clicked() {
+    QString ip = ui->wd_ip2->getIP();
+    QString name = ui->le_name2->text();
+    uint intvl = ui->cb_intvl2->currentText().toUInt();
+    ui->wd_ip2->setDisabled(true);
+    ui->le_name2->setDisabled(true);
+    ui->cb_intvl2->setDisabled(true);
+    startAcq(ip, name, intvl);
 }
 
 
+void IC6Comm::on_tb_stop1_clicked() {
+    ui->wd_ip1->setDisabled(false);
+    ui->le_name1->setDisabled(false);
+    ui->cb_intvl1->setDisabled(false);
+}
+void IC6Comm::on_tb_stop2_clicked() {
+    ui->wd_ip2->setDisabled(false);
+    ui->le_name2->setDisabled(false);
+    ui->cb_intvl2->setDisabled(false);
+}
+
+
+void IC6Comm::on_tb_view1_clicked() {
+}
+void IC6Comm::on_tb_view2_clicked() {
+}
 
 void IC6Comm::setStatusbar() {
     QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.0.0", this);
@@ -104,42 +88,75 @@ void IC6Comm::setStatusbar() {
 }
 
 void IC6Comm::initListTble(const QStringList& sl_ips) {
-    QTableWidget* tableWidget = ui->tbl_list;
-    tableWidget->setRowCount(5);
-    tableWidget->setColumnCount(3);
-    QStringList headers;
-    headers << "IP" << "Run Time" << "Status";
-    tableWidget->setHorizontalHeaderLabels(headers);
-    // 设置表格内容
-    for (int row = 0; row < tableWidget->rowCount(); ++row) {
-        // IP 列
-        tableWidget->setItem(row, 0, new QTableWidgetItem(QString("192.168.1.%1").arg(row + 1)));
-        // 运行时间列
-        tableWidget->setItem(row, 1, new QTableWidgetItem("00:00:00"));
-        tableWidget->setItem(row, 2, new QTableWidgetItem("00:00:00"));
+    qDebug() << sl_ips;
+}
+
+void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl) {
+    if(QHostAddress(ip).isNull()) {
+        QMessageBox::warning(this, "错误", "无效的IP地址");
+        return;
     }
-    // 设置表格属性
-    tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 列自适应宽度
-    tableWidget->verticalHeader()->setVisible(false); // 隐藏行号
-    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // 选中整行
-    tableWidget->setContextMenuPolicy (Qt::CustomContextMenu);
-    connect(tableWidget, &QTableWidget::customContextMenuRequested, this, &IC6Comm::tblMenu);
+    bool connected = connectTest(ip);
+    if(!connected) {
+        return;
+    }
+    // 创建通信对象和线程
+    QThread* thread = new QThread;
+    CommWorker* device = new CommWorker(ip, name);
+    // 移动对象到线程
+    device->moveToThread(thread);
+    // 连接信号槽
+    connect(thread, &QThread::started, device, [this, intvl]() { // 使用 this 作为上下文
+        if (!devices.isEmpty()) {
+            devices.last()->startWork(intvl); // 通过成员变量访问
+        }
+    });
+    connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(device, &CommWorker::dataReceived, this, &IC6Comm::handleDataReceived);
+    connect(device, &CommWorker::errorOccurred, this, &IC6Comm::handleError);
+    // 存储对象和线程
+    devices.insert(name, device);
+    threads.append(thread);
+    // 启动线程
+    thread->start();
 }
 
-void IC6Comm::getInstResp(const QByteArray& resp) {
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << resp;
+bool IC6Comm::connectTest(const QString& ip) {
+    QTcpSocket socket;
+    socket.setProxy(QNetworkProxy::NoProxy);
+    socket.connectToHost(ip, 2101);
+    socket.waitForConnected(200);
+    connect(&socket, &QTcpSocket::readyRead, [&socket, this]() {
+        QByteArray resp = socket.readAll();
+        int resp_len = resp.length();
+        statusBar()->showMessage(QString(resp.mid(5, resp_len - 5)), 2000);
+    });
+    bool connected = socket.state() == QTcpSocket::ConnectedState;
+    if(connected) {
+        connected = true;
+        socket.write(Helper::BA_HELLO);
+        socket.flush();
+    }
+    socket.waitForReadyRead(200);
+    socket.disconnectFromHost();
+    return connected;
 }
 
 
-void IC6Comm::on_tb_new_clicked() {
-    QString ip = ui->wd_ip->getIP();
-    QByteArray ba_hello = Helper::helloMsg();
-    CommWorker* worker = new CommWorker();
-    worker->start();
-    worker->connectInst(ip);
-    worker->setNewIntlv(1000);
-    worker->setCmd(Helper::BA_HELLO);
-    worker->acqCtrl(false);
+void IC6Comm::handleDataReceived(const QByteArray& data, const QString& name) {
+    uint cks   = data.back() & 0xff;
+    QByteArray msg_len_ba = data.mid(0, 2);
+    int msg_len = Helper::calcMsgLen(msg_len_ba);
+    QByteArray msg_body_ba = data.mid(2, msg_len);
+    auto cks_ = Helper::calcCks(msg_body_ba);
+    if(cks == cks_) {
+        Helper::calcData(msg_body_ba.mid(2, -1));
+        // qDebug() << name << msg_body_ba.mid(2, -1).toHex();
+    }
+}
+
+void IC6Comm::handleError(const QString& error, const QString& ip) {
+    qDebug() << QString("[%1] error: %2").arg(ip, error);
 }
 

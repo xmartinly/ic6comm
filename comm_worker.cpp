@@ -1,80 +1,76 @@
 ﻿#include "comm_worker.h"
 
+#include <QNetworkProxy>
 
-CommWorker::CommWorker() {
-    last_tm_ = QDateTime::currentMSecsSinceEpoch();
+CommWorker::CommWorker(const QString& ip, const QString& name, QObject* parent)
+    : QObject(parent), targetIp(ip), targetName(name) {
+    socket = new QTcpSocket(this);
+    socket->setProxy(QNetworkProxy::NoProxy);
+    timer = new QTimer(this);
+    // 连接信号槽
+    connect(socket, &QTcpSocket::connected, this, &CommWorker::handleConnected);
+    connect(socket, &QTcpSocket::readyRead, this, &CommWorker::handleReadyRead);
+    connect(socket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
+            this, &CommWorker::handleError);
+    connect(timer, &QTimer::timeout, this, &CommWorker::work);
 }
 
 CommWorker::~CommWorker() {
+    stopWork();
+    socket->deleteLater();
+    timer->deleteLater();
 }
 
-bool CommWorker::connectInst(const QString& ip) {
+void CommWorker::startWork(int interval) {
+    if(!timer->isActive()) {
+        connectToHost();
+        timer->start(interval); // 定时执行任务
+    }
+}
+
+void CommWorker::stopWork() {
     // This is available in all editors.
-    qDebug() << __FUNCTION__ << ip;
-    socket_->connectToHost(ip, 2101);
-    socket_->waitForConnected(500);
-    return socket_->isOpen();
-}
-
-bool CommWorker::disconnectInst() {
-    if(!socket_->isOpen()) {
-        return true;
+    qDebug() << __FUNCTION__ << socket->state() << timer->isActive();
+    timer->stop();
+    if(socket->state() == QTcpSocket::ConnectedState) {
+        socket->disconnectFromHost();
     }
-    return socket_->waitForDisconnected(100);
 }
 
-void CommWorker::getResp() {
-    QByteArray ba_resp;
-    while (socket_->waitForReadyRead(50)) {
-        ba_resp = socket_->readAll();
-    }
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << ba_resp;
-}
-
-void CommWorker::sendCmd() {
-    if(socket_ == nullptr || !socket_->isOpen() || is_stop_) {
-        return;
-    }
-    socket_->write(cmd_);
-    socket_->flush();
-}
-
-
-
-void CommWorker::run() {
-    acq_tmr_ = new QTimer();
-    socket_ = new QTcpSocket();
-    socket_->setProxy(QNetworkProxy::NoProxy);
-    connect(acq_tmr_, &QTimer::timeout, this, &CommWorker::sendCmd, Qt::DirectConnection);
-    connect(socket_, &QTcpSocket::readyRead, this, &CommWorker::getResp);
-    exec();
-}
-
-void CommWorker::setNewIntlv(uint new_intlv) {
-    acq_tmr_->setInterval(new_intlv);
-}
-
-void CommWorker::acqCtrl(bool is_stop) {
-    is_stop_ = is_stop;
-    if(!is_stop_) {
-        acq_tmr_->start();
+void CommWorker::work() {
+    if(isConnected) {
+        // 示例：发送指令（需根据实际协议修改）
+        // QByteArray cmd = Helper::BA_SNRDATA;
+        // socket->write(Helper::BA_HELLO);
+        socket->write(Helper::BA_SNRDATA);
+        socket->flush();
     } else {
-        acq_tmr_->stop();
+        // This is available in all editors.
+        qDebug() << __FUNCTION__ << isConnected;
+        connectToHost(); // 尝试重新连接
     }
 }
 
-bool CommWorker::acqStatus() const {
-    return is_stop_;
+void CommWorker::connectToHost() {
+    if(socket->state() == QTcpSocket::UnconnectedState) {
+        socket->connectToHost(targetIp, 2101); // 假设端口2101
+        socket->waitForConnected(100);
+    }
 }
 
-void CommWorker::setCmd(const QByteArray& cmd) {
-    cmd_ = cmd;
+void CommWorker::handleConnected() {
+    isConnected = true;
+    qDebug() << "Connected to" << targetIp;
 }
 
-void CommWorker::setIpAddr(const QString& ip) {
-    inst_ip_ = ip;
+void CommWorker::handleReadyRead() {
+    // socket->waitForReadyRead(100);
+    QByteArray data = socket->readAll();
+    emit dataReceived(data, targetName); // 转发数据到主线程
 }
 
-
-
+void CommWorker::handleError(QAbstractSocket::SocketError error) {
+    QString errorMsg = socket->errorString();
+    emit errorOccurred(errorMsg, targetIp);
+    isConnected = false;
+}

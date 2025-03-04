@@ -149,5 +149,6 @@
         <file>Picture/svg/wm_trash_can_w.svg</file>
         <file>Picture/svg/wm_link.svg</file>
         <file>Picture/svg/wm_broken_link.svg</file>
+        <file>Picture/svg/wm_eye.svg</file>
     </qresource>
 </RCC>

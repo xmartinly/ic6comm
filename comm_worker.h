@@ -12,45 +12,36 @@ struct CygResp {
 };
 
 
-class CommWorker: public QThread {
+class CommWorker: public QObject {
     Q_OBJECT
   public:
-    CommWorker();
+    explicit CommWorker(const QString& ip, const QString& name, QObject* parent = nullptr);
     ~CommWorker();
 
-  private:
-    QByteArray cmd_;
-    bool is_loop_ = false;
-    bool is_stop_ = false;
-    QString inst_ip_;
-    QString inst_name_;
-    uint acq_intlv_ = 100;
-    qint64 last_tm_ = 0;
-    QTcpSocket* socket_ = nullptr;
-    QTimer* acq_tmr_ = nullptr;
-    CygResp resp_;
-  private:
-
-
-  public slots:
-    void getResp();
-    void sendCmd();
-
-  public:
-    void run();
-    void setNewIntlv(uint new_intlv);
-    void acqCtrl(bool is_stop);
-    bool acqStatus() const;
-    void setCmd(const QByteArray& cmd);
-
-    void setIpAddr(const QString& ip);
-
-    bool connectInst(const QString& ip);
-    bool disconnectInst();
+    void startWork(int interval);  // 启动定时任务
+    void stopWork();               // 停止任务
 
   signals:
-    void sendInstResp(const QByteArray&);
+    void dataReceived(const QByteArray& data, const QString& ip); // 数据接收信号
+    void errorOccurred(const QString& error, const QString& ip);  // 错误信号
 
+  public slots:
+    void work();  // 定时任务处理
+
+  private slots:
+    void handleConnected();
+    void handleReadyRead();
+    void handleError(QAbstractSocket::SocketError error);
+
+
+  private:
+    QTcpSocket* socket;
+    QTimer* timer;
+    QString targetIp;
+    QString targetName;
+    bool isConnected = false;
+
+    void connectToHost();
 
 };
 

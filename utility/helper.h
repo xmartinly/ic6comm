@@ -16,6 +16,10 @@ class Helper {
 
     static uint calcCks(const QByteArray& ba_msg);
 
+
+    static void calcData(const QByteArray& data);
+
+
     static QByteArray calcCmdLen(const QByteArray& ba_cmd);
 
     static QByteArray helloMsg();
@@ -38,6 +42,8 @@ class Helper {
     static float calcReal(const QByteArray& resp);
 
     static int calcInt(const QByteArray& resp);
+
+    static QStringList calcStatus(const QByteArray& stat);
 
     // static QStringList listConfigFile(CygEnums::FileCatalog catalog = CygEnums::FileCatalog::Recipe);
 
