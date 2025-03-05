@@ -83,7 +83,7 @@ uint Helper::calcCks(const QByteArray& ba_msg) {
     return cks_;
 }
 
-void Helper::calcData(const QByteArray& data) {
+void Helper::calcData(const QByteArray& data, QList<int>* l_act, QList<float>* l_freq, QList<bool>* l_stat) {
     int stat_len = 8;
     int freq_len = 64;
     int act_len = 32;
@@ -93,19 +93,16 @@ void Helper::calcData(const QByteArray& data) {
     QByteArray ba_status = data.mid(1, stat_len);
     QByteArray ba_freq = data.mid(10, freq_len);
     QByteArray ba_act = data.mid(75, act_len);
-    // This is available in all editors.
-    QList<int> acts;
-    QStringList stats = calcStatus(ba_status);
-    QList<float> freqs;
-    // qDebug() << __FUNCTION__ << ba_status.toHex();
+    auto stat = calcStatus(ba_status);
     for (int var = 0; var < 8; ++var) {
         QByteArray act = ba_act.mid(var * 4, 4);
         QByteArray freq = ba_freq.mid(var * 8, 8);
-        acts.append(calcInt(act));
-        freqs.append(calcFreq(freq));
+        l_act->append(calcInt(act));
+        l_freq->append(calcFreq(freq));
+        l_stat->append(stat.at(var));
     }
     // This is available in all editors.
-    qDebug() << __FUNCTION__ << acts << freqs << stats;
+    // qDebug() << __FUNCTION__ << acts << freqs << stats;
 }
 
 ///
@@ -347,14 +344,10 @@ int Helper::calcInt(const QByteArray& resp) {
     return value;
 }
 
-QStringList Helper::calcStatus(const QByteArray& stat) {
-    QStringList status = {};
-    if(stat.length() != 8) {
-        return status;
-    }
+QList<bool> Helper::calcStatus(const QByteArray& stat) {
+    QList<bool> status = {};
     foreach (auto c, stat) {
-        bool is_failed = c & 1;
-        status.push_back(is_failed ? "NG" : "OK");
+        status.append( (c & 1) == 0);
     }
     return status;
 }

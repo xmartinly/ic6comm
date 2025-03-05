@@ -153,7 +153,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Start all</string>
+         <string>Start</string>
         </property>
         <property name="text">
          <string/>
@@ -185,7 +185,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop all</string>
+         <string>Stop</string>
         </property>
         <property name="text">
          <string/>
@@ -217,7 +217,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop all</string>
+         <string>View</string>
         </property>
         <property name="text">
          <string/>
@@ -265,7 +265,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>3</number>
         </property>
         <item>
          <property name="text">
@@ -328,7 +328,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Start all</string>
+         <string>Start</string>
         </property>
         <property name="text">
          <string/>
@@ -360,7 +360,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop all</string>
+         <string>Stop</string>
         </property>
         <property name="text">
          <string/>
@@ -392,7 +392,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop all</string>
+         <string>View</string>
         </property>
         <property name="text">
          <string/>

@@ -23,8 +23,8 @@
 #include <QStatusBar>
 
 #include <QThread>
-// #include <QThreadPool>
-// #include <QRunnable>
+#include <QThreadPool>
+#include <QRunnable>
 #include <QQueue>
 
 #include <QPushButton>

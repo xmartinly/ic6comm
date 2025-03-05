@@ -13,14 +13,16 @@ SOURCES += \
       main.cpp \
     ic6_comm.cpp \
     thirdparty/ipaddress.cpp \
-    utility/helper.cpp
+    utility/helper.cpp \
+    utility/write_data.cpp
 
 HEADERS += \
     comm_worker.h \
        stable.h \
     ic6_comm.h \
     thirdparty/ipaddress.h \
-    utility/helper.h
+    utility/helper.h \
+    utility/write_data.h
 
 FORMS += \
     ic6_comm.ui

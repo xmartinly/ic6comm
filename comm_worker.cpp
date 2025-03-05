@@ -19,6 +19,7 @@ CommWorker::~CommWorker() {
     stopWork();
     socket->deleteLater();
     timer->deleteLater();
+    this->deleteLater();
 }
 
 void CommWorker::startWork(int interval) {
@@ -29,19 +30,17 @@ void CommWorker::startWork(int interval) {
 }
 
 void CommWorker::stopWork() {
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << socket->state() << timer->isActive();
+    isConnected = false;
     timer->stop();
     if(socket->state() == QTcpSocket::ConnectedState) {
         socket->disconnectFromHost();
+        // This is available in all editors.
+        qDebug() << __FUNCTION__ << socket->state() << timer->isActive();
     }
 }
 
 void CommWorker::work() {
     if(isConnected) {
-        // 示例：发送指令（需根据实际协议修改）
-        // QByteArray cmd = Helper::BA_SNRDATA;
-        // socket->write(Helper::BA_HELLO);
         socket->write(Helper::BA_SNRDATA);
         socket->flush();
     } else {
