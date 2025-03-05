@@ -130,8 +130,6 @@ void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const Q
 }
 
 void IC6Comm::write_data(InstConfig* inst) {
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << inst->comm_data_;
     WriteData* write_worker = new WriteData(inst->comm_data_, inst->file_name_);
     connect(write_worker, &WriteData::emit_write_data_res, this, &IC6Comm::app_info_show);
     write_pool->start(write_worker);
@@ -150,7 +148,7 @@ void IC6Comm::app_info_show(const QString& msg) {
 
 bool IC6Comm::ipDupCheck(const QString& ip) {
     if(ip_list_.contains(ip)) {
-        QMessageBox::warning(this, u8"错误", u8"重复的IP地址");
+        QMessageBox::warning(this, "Error", "Duplicate IP address");
         return true;
     }
     return false;
@@ -160,8 +158,6 @@ void IC6Comm::stopThread(const QString& ip, const QString& name) {
     auto thread = threads.find(ip).value();
     thread->exit();
     threads.remove(ip);
-    // auto device = devices.find(name).value();
-    // device.
     devices.remove(name);
     if(inst_list_.contains(name)) {
         write_data(inst_list_.find(name).value());
@@ -182,7 +178,7 @@ void IC6Comm::initListTble(const QStringList& sl_ips) {
 
 void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl) {
     if(QHostAddress(ip).isNull()) {
-        QMessageBox::warning(this, u8"错误", u8"无效的IP地址");
+        QMessageBox::warning(this, "Error", "Invalid IP address");
         return;
     }
     QString version;

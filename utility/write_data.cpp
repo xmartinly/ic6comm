@@ -9,11 +9,11 @@ WriteData::~WriteData() {
 void WriteData::run() {
     QFile file = QFile(data_file);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
-        emit emit_write_data_res(u8"写入错误, 请检查文件是否在使用中");
+        emit emit_write_data_res("Write error, please check if the file is in use.");
         return;
     }
     if( file.write(data_str.toStdString().c_str())) {
-        emit emit_write_data_res(data_file + ":" + QString::number(data_str.count("\n")) + u8"条 写入正常");
+        emit emit_write_data_res(data_file + ":" + QString::number(data_str.count("\n")) + "records written successfully.");
     }
     file.close();
 }
