@@ -84,7 +84,7 @@ class IC6Comm : public QMainWindow {
     bool ipDupCheck(const QString& ip);
     bool nameCheck(const QString& name);
     void setStatusbar();
-    void startAcq(const QString& ip, const QString& name, uint intvl = 200);
+    void startAcq(const QString& ip, const QString& name, uint intvl = 200, const QString& ch = "1");
     void stopThread(const QString& ip, const QString& name);
     void dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts);
     void write_data(InstConfig* inst);

@@ -82,7 +82,7 @@ void IC6Comm::on_tb_start1_clicked() {
     ui->wd_ip1->setDisabled(true);
     ui->le_name1->setDisabled(true);
     ui->cb_intvl1->setDisabled(true);
-    startAcq(ip, name, intvl);
+    startAcq(ip, name, intvl, "1");
     ip_list_.append(ip);
     ui->frame1->setObjectName(name);
     ui->frame1->setProperty("channel", "1");
@@ -104,7 +104,7 @@ void IC6Comm::on_tb_start2_clicked() {
     ui->wd_ip2->setDisabled(true);
     ui->le_name2->setDisabled(true);
     ui->cb_intvl2->setDisabled(true);
-    startAcq(ip, name, intvl);
+    startAcq(ip, name, intvl, "2");
     ip_list_.append(ip);
     ui->frame2->setObjectName(name);
     ui->frame2->setProperty("channel", "2");
@@ -335,7 +335,7 @@ void IC6Comm::setStatusbar() {
 /// \param name
 /// \param intvl
 ///
-void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl) {
+void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const QString& ch) {
     if(QHostAddress(ip).isNull()) {
         QMessageBox::warning(this, "Error", "Invalid IP address");
         return;
@@ -343,10 +343,15 @@ void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl) {
     QString version;
     bool connected = connectTest(ip, &version);
     if(!connected) {
+        QMessageBox::warning(this, "Error", QString("Can't connect to %1").arg(ip));
         return;
     }
     // create instrument instacne
     InstConfig* inst = new InstConfig();
+    auto lbl = this->findChild<QLabel*>(QString("ch%1_%2").arg(ch, "info"));
+    if(lbl) {
+        lbl->setText(QString("Inst%1#: %2, %3, %4").arg(ch, name, version, ip));
+    }
     inst->inst_name_ = name;
     inst->ip_addr_ = ip;
     inst->inst_ver_ = version;
@@ -390,6 +395,7 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
     QString version_;
     connect(&socket, &QTcpSocket::readyRead, [&socket, &version_]() {
         QByteArray resp = socket.readAll();
+        qDebug() << Helper::hexFormat(resp);
         int resp_len = resp.length();
         version_ = QString(resp.mid(5, resp_len - 5));
     });
