@@ -17,7 +17,8 @@ class Helper {
     static uint calcCks(const QByteArray& ba_msg);
 
 
-    static void calcData(const QByteArray& data, QList<int>* l_act, QList<float>* l_freq, QList<bool>* l_stat);
+
+    static void calcData(const QByteArray& data, QList<int>* l_act, QList<double>* l_freq, QList<bool>* l_stat);
 
 
     static QByteArray calcCmdLen(const QByteArray& ba_cmd);

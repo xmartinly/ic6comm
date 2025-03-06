@@ -6,9 +6,12 @@ WriteData::WriteData(const QString& data, const QString& file): data_str(data), 
 WriteData::~WriteData() {
 }
 
+///
+/// \brief WriteData::run
+///
 void WriteData::run() {
     QFile file = QFile(data_file);
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) { // write error
         emit emit_write_data_res("Write error, please check if the file is in use.");
         return;
     }

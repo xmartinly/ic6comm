@@ -17,7 +17,6 @@ struct InstConfig {
     QString inst_name_;
     QString file_name_;
     QString comm_data_;
-    // bool
     uint intvl_;
     uint data_count_ = 0;
     void setFileName() {
@@ -26,15 +25,13 @@ struct InstConfig {
         QString tm2 = start_tm.toString("yyyyMMdd_hhmmss");
         QString _file = QString("%1/data/%2_%3.csv");
         file_name_ = _file.arg(QDir::currentPath(), tm2, inst_name_);
-        QString file_header = "Name:,%1\nIP:,%2\nVersion:,%3\nInterval:,%4\nStartTime:,%5\nData:\n,,Frequency1,Act1,Frequency2,Act2,Frequency3,Act3,Frequency4,Act4,Frequency5,Act5,Frequency6,Act6,Frequency7,Act7,Frequency8,Act8\n";
+        QString file_header = "Name:,%1\nIP:,%2\nVersion:,%3\nInterval:,%4\nStartTime:,%5\nData:\nTime,Frequency1,Act1,Frequency2,Act2,Frequency3,Act3,Frequency4,Act4,Frequency5,Act5,Frequency6,Act6,Frequency7,Act7,Frequency8,Act8\n";
         QString header = file_header.arg(inst_name_, ip_addr_, inst_ver_, QString::number(intvl_), tm1);
         QFile data_file = QFile(file_name_);
         if(data_file.open(QIODevice::WriteOnly)) {
             data_file.write(header.toStdString().c_str());
             data_file.close();
         }
-        // This is available in all editors.
-        qDebug() << __FUNCTION__ << header ;
     }
 };
 
@@ -61,13 +58,10 @@ class IC6Comm : public QMainWindow {
 
     void on_tb_stop1_clicked();
 
-    void on_tb_view1_clicked();
-
     void on_tb_start2_clicked();
 
     void on_tb_stop2_clicked();
 
-    void on_tb_view2_clicked();
 
   private:
     Ui::IC6Comm* ui;
@@ -89,13 +83,15 @@ class IC6Comm : public QMainWindow {
   private:
     bool connectTest(const QString& ip, QString* version);
     bool ipDupCheck(const QString& ip);
-
     void setStatusbar();
-    void initListTble(const QStringList& sl_ips = {});
     void startAcq(const QString& ip, const QString& name, uint intvl = 200);
     void stopThread(const QString& ip, const QString& name);
-    void dataHandle(const QString& name, const QList<bool>& status, const QList<float> frequencies, const QList<int>& acts);
+    void dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts);
     void write_data(InstConfig* inst);
+    void setInstLabel(const QString& name, const QList<bool>& status, const QStringList& data);
+
+    void readConfig();
+    void writeConfig();
 
   private slots:
     void handleDataReceived(const QByteArray& data, const QString& name);

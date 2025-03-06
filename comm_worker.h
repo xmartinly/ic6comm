@@ -18,15 +18,15 @@ class CommWorker: public QObject {
     explicit CommWorker(const QString& ip, const QString& name, QObject* parent = nullptr);
     ~CommWorker();
 
-    void startWork(int interval);  // 启动定时任务
-    void stopWork();               // 停止任务
+    void startWork(int interval);  // start timer
+    void stopWork();               // stop task
 
   signals:
-    void dataReceived(const QByteArray& data, const QString& ip); // 数据接收信号
-    void errorOccurred(const QString& error, const QString& ip);  // 错误信号
+    void dataReceived(const QByteArray& data, const QString& ip); // data receive signal
+    void errorOccurred(const QString& error, const QString& ip);  // error signal
 
   public slots:
-    void work();  // 定时任务处理
+    void work();  // scheduled task processing
 
   private slots:
     void handleConnected();

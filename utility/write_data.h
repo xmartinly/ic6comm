@@ -1,4 +1,4 @@
-#ifndef WRITEDATA_H
+﻿#ifndef WRITEDATA_H
 #define WRITEDATA_H
 
 #include <QObject>
@@ -14,13 +14,13 @@ class WriteData: public QObject, public QRunnable {
     void run();
 
   signals:
-    //发送写文件的信息.
+    // send write file information to main thread
     void emit_write_data_res(const QString&);
 
   private:
-    //需要写入的数据
+    // data to be written
     QString data_str;
-    //完全文件名. c:\xx\aa.csv
+    // data file name
     QString data_file;
 };
 

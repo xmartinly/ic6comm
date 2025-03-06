@@ -83,7 +83,7 @@ uint Helper::calcCks(const QByteArray& ba_msg) {
     return cks_;
 }
 
-void Helper::calcData(const QByteArray& data, QList<int>* l_act, QList<float>* l_freq, QList<bool>* l_stat) {
+void Helper::calcData(const QByteArray& data, QList<int>* l_act, QList<double>* l_freq, QList<bool>* l_stat) {
     int stat_len = 8;
     int freq_len = 64;
     int act_len = 32;
@@ -101,8 +101,6 @@ void Helper::calcData(const QByteArray& data, QList<int>* l_act, QList<float>* l
         l_freq->append(calcFreq(freq));
         l_stat->append(stat.at(var));
     }
-    // This is available in all editors.
-    // qDebug() << __FUNCTION__ << acts << freqs << stats;
 }
 
 ///
@@ -312,7 +310,6 @@ double Helper::calcFreq(const QByteArray& resp) {
     QDataStream stream(resp);
     stream.setByteOrder(QDataStream::LittleEndian);
     qint64 value;
-    // 从流中读取 long 值
     stream >> value;
     return value * factor;
 }

@@ -6,49 +6,65 @@ IC6Comm::IC6Comm(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::IC6Comm) {
     ui->setupUi(this);
-    ui->splitter->setStretchFactor(0, 2);
-    ui->splitter->setStretchFactor(1, 1);
+    // ui->splitter->setStretchFactor(0, 5);
+    // ui->splitter->setStretchFactor(1, 7);
     setStatusbar();
     statusBar()->showMessage("ShowMessage", 2000);
-    initListTble();
-    ui->wd_ip1->setIP("172.16.6.136");
-    ui->wd_ip2->setIP("172.16.6.137");
+    // ui->wd_ip1->setIP("127.0.0.1");
+    // ui->wd_ip2->setIP("172.16.6.137");
     write_pool = new QThreadPool(this);
     write_pool->setMaxThreadCount(QThread::idealThreadCount());
+    readConfig();
 }
 
 IC6Comm::~IC6Comm() {
-    qDebug() << threads.count();
+    writeConfig();
+    foreach (auto inst, inst_list_) {
+        QString name = inst->inst_name_;
+        QString ip = inst->ip_addr_;
+        stopThread(ip, name);
+    }
     foreach (auto thread, threads) {
-        thread->quit();
+        thread->exit();
         thread->wait();
         delete thread;
     }
-    qDeleteAll(inst_list_);
     delete ui;
 }
 
+///
+/// \brief IC6Comm::on_act_comm_setting_triggered
+///
 void IC6Comm::on_act_comm_setting_triggered() {
 }
-
-
+///
+/// \brief IC6Comm::on_act_exit_triggered
+///
 void IC6Comm::on_act_exit_triggered() {
     this->close();
 }
 
-
+///
+/// \brief IC6Comm::on_act_man_triggered
+///
 void IC6Comm::on_act_man_triggered() {
 }
 
-
+///
+/// \brief IC6Comm::on_act_about_triggered
+///
 void IC6Comm::on_act_about_triggered() {
 }
 
-
+///
+/// \brief IC6Comm::on_act_lang_triggered
+///
 void IC6Comm::on_act_lang_triggered() {
 }
 
-
+///
+/// \brief IC6Comm::on_tb_start1_clicked
+///
 void IC6Comm::on_tb_start1_clicked() {
     QString ip = ui->wd_ip1->getIP();
     if(ipDupCheck(ip)) {
@@ -60,10 +76,14 @@ void IC6Comm::on_tb_start1_clicked() {
     ui->le_name1->setDisabled(true);
     ui->cb_intvl1->setDisabled(true);
     startAcq(ip, name, intvl);
-    // inst_list_.insert(name, )
     ip_list_.append(ip);
+    ui->frame1->setObjectName(name);
+    ui->frame1->setProperty("channel", "1");
 }
 
+///
+/// \brief IC6Comm::on_tb_start2_clicked
+///
 void IC6Comm::on_tb_start2_clicked() {
     QString ip = ui->wd_ip2->getIP();
     if(ipDupCheck(ip)) {
@@ -76,23 +96,28 @@ void IC6Comm::on_tb_start2_clicked() {
     ui->cb_intvl2->setDisabled(true);
     startAcq(ip, name, intvl);
     ip_list_.append(ip);
+    ui->frame2->setObjectName(name);
+    ui->frame2->setProperty("channel", "2");
 }
 
-
+///
+/// \brief IC6Comm::on_tb_stop1_clicked
+///
 void IC6Comm::on_tb_stop1_clicked() {
     QString ip = ui->wd_ip1->getIP();
     QString name = ui->le_name1->text();
-    ip_list_.removeOne(ip);
     stopThread(ip, name);
     ui->wd_ip1->setDisabled(false);
     ui->le_name1->setDisabled(false);
     ui->cb_intvl1->setDisabled(false);
 }
 
+///
+/// \brief IC6Comm::on_tb_stop2_clicked
+///
 void IC6Comm::on_tb_stop2_clicked() {
     QString ip = ui->wd_ip2->getIP();
     QString name = ui->le_name2->text();
-    ip_list_.removeOne(ip);
     stopThread(ip, name);
     ui->wd_ip2->setDisabled(false);
     ui->le_name2->setDisabled(false);
@@ -100,35 +125,44 @@ void IC6Comm::on_tb_stop2_clicked() {
 }
 
 
-void IC6Comm::on_tb_view1_clicked() {
-}
-void IC6Comm::on_tb_view2_clicked() {
-}
-
-void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const QList<float> frequencies, const QList<int>& acts) {
+///
+/// \brief IC6Comm::dataHandle
+/// \param name
+/// \param status
+/// \param frequencies
+/// \param acts
+///
+void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts) {
     if(!inst_list_.contains(name)) {
         return;
     }
     InstConfig* inst = inst_list_.find(name).value();
     inst->data_count_++;
     QStringList inst_data_store;
-    QStringList inst_data_shown;
+    QStringList shown_data;
     int data_cnt = status.count();
+    QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     for (int var = 0; var < data_cnt; ++var) {
         bool state = status.at(var);
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
         QString s_act = state ? QString::number(acts.at(var)) : "0";
-        QString s_state = state ? "OK" : "NG";
-        inst_data_shown.append(s_state + ":" + s_freq + ":" + s_act);
+        QString shown = "Freq: " + s_freq + ", Act: " + s_act;
+        QString idx = QString::number((var + 1));
+        shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
         inst_data_store.append(s_freq);
         inst_data_store.append(s_act);
     }
-    inst->comm_data_ += ",," + inst_data_store.join(",") + "\n";
+    setInstLabel(name, status, shown_data);
+    inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
     if(inst->data_count_ > 50) {
         write_data(inst);
     }
 }
 
+///
+/// \brief IC6Comm::write_data
+/// \param inst
+///
 void IC6Comm::write_data(InstConfig* inst) {
     WriteData* write_worker = new WriteData(inst->comm_data_, inst->file_name_);
     connect(write_worker, &WriteData::emit_write_data_res, this, &IC6Comm::app_info_show);
@@ -136,6 +170,69 @@ void IC6Comm::write_data(InstConfig* inst) {
     inst->comm_data_.clear();
     inst->data_count_ = 0;
 }
+
+void IC6Comm::setInstLabel(const QString& name, const QList<bool>& status, const QStringList& data) {
+    auto frame = this->findChild<QFrame*>(name);
+    QString ch_s = frame->property("channel").toString();
+    int ch_count = status.count();
+    for (int var = 0; var < ch_count; ++var) {
+        QString idx_s = QString::number(var + 1);
+        QString svg_ok_name = QString(":/Picture/svg/wm_circled_%1_c.svg").arg(idx_s);
+        QString svg_ng_name = QString(":/Picture/svg/wm_circled_%1.svg").arg(idx_s);
+        QPixmap pixmap(status.at(var) ? svg_ok_name : svg_ng_name);
+        pixmap.setDevicePixelRatio(devicePixelRatio());
+        QString data_lb_name = QString("ch%1_%2").arg(ch_s, idx_s);
+        QString icon_lb_name = QString("xtal%1_%2").arg(ch_s, idx_s);
+        auto icon_label = frame->findChild<QLabel*>(icon_lb_name);
+        auto data_label = frame->findChild<QLabel*>(data_lb_name);
+        data_label->setText(data.at(var));
+        icon_label->setPixmap(pixmap);
+    }
+}
+
+void IC6Comm::readConfig() {
+    QString path = QCoreApplication::applicationDirPath();
+    QSettings m_iniFile = QSettings(path + "/settings.ini", QSettings::IniFormat);
+    m_iniFile.beginGroup("CH1");
+    QString ch1_ip = m_iniFile.value("IP").toString();
+    QString ch1_intvl = m_iniFile.value("INTERVAL").toString();
+    QString ch1_name = m_iniFile.value("NAME").toString();
+    m_iniFile.endGroup();
+    ui->wd_ip1->setIP(ch1_ip);
+    ui->cb_intvl1->setCurrentText(ch1_intvl);
+    ui->le_name1->setText(ch1_name);
+    m_iniFile.beginGroup("CH2");
+    QString ch2_ip = m_iniFile.value("IP").toString();
+    QString ch2_intvl = m_iniFile.value("INTERVAL").toString();
+    QString ch2_name = m_iniFile.value("NAME").toString();
+    m_iniFile.endGroup();
+    ui->wd_ip2->setIP(ch2_ip);
+    ui->cb_intvl2->setCurrentText(ch2_intvl);
+    ui->le_name2->setText(ch2_name);
+}
+
+void IC6Comm::writeConfig() {
+    QString path = QCoreApplication::applicationDirPath();
+    QSettings m_iniFile = QSettings(path + "/settings.ini", QSettings::IniFormat);
+    m_iniFile.clear();
+    QString ch1_ip = ui->wd_ip1->getIP();
+    QString ch2_ip = ui->wd_ip2->getIP();
+    QString ch1_intvl = ui->cb_intvl1->currentText();
+    QString ch2_intvl = ui->cb_intvl2->currentText();
+    QString ch1_name = ui->le_name1->text();
+    QString ch2_name = ui->le_name2->text();
+    m_iniFile.beginGroup("CH1");
+    m_iniFile.setValue("IP", ch1_ip);
+    m_iniFile.setValue("NAME", ch1_name);
+    m_iniFile.setValue("INTERVAL", ch1_intvl);
+    m_iniFile.endGroup();
+    m_iniFile.beginGroup("CH2");
+    m_iniFile.setValue("IP", ch2_ip);
+    m_iniFile.setValue("NAME", ch2_name);
+    m_iniFile.setValue("INTERVAL", ch2_intvl);
+    m_iniFile.endGroup();
+}
+
 
 ///
 /// \brief VgcComm::app_info_show. 状态栏显示信息槽函数.
@@ -145,7 +242,11 @@ void IC6Comm::app_info_show(const QString& msg) {
     statusBar()->showMessage(msg, 3000);
 }
 
-
+///
+/// \brief IC6Comm::ipDupCheck
+/// \param ip
+/// \return
+///
 bool IC6Comm::ipDupCheck(const QString& ip) {
     if(ip_list_.contains(ip)) {
         QMessageBox::warning(this, "Error", "Duplicate IP address");
@@ -154,28 +255,48 @@ bool IC6Comm::ipDupCheck(const QString& ip) {
     return false;
 }
 
+///
+/// \brief IC6Comm::stopThread
+/// \param ip
+/// \param name
+///
 void IC6Comm::stopThread(const QString& ip, const QString& name) {
-    auto thread = threads.find(ip).value();
-    thread->exit();
-    threads.remove(ip);
-    devices.remove(name);
+    if(threads.contains(ip)) {
+        auto thread = threads.find(ip).value();
+        thread->exit();
+        thread->wait(100);
+        delete thread;
+        threads.remove(ip);
+    }
+    if(devices.contains(name)) {
+        devices.remove(name);
+    }
     if(inst_list_.contains(name)) {
-        write_data(inst_list_.find(name).value());
+        auto inst = inst_list_.find(name).value();
+        write_data(inst);
+        inst_list_.remove(name);
+        delete inst;
+    }
+    if(ip_list_.contains(ip)) {
+        ip_list_.removeOne(ip);
     }
 }
 
-
-
-
+///
+/// \brief IC6Comm::setStatusbar
+///
 void IC6Comm::setStatusbar() {
     QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.0.0", this);
     statusBar()->addPermanentWidget(labCellIndex);
 }
 
-void IC6Comm::initListTble(const QStringList& sl_ips) {
-    qDebug() << sl_ips;
-}
 
+///
+/// \brief IC6Comm::startAcq
+/// \param ip
+/// \param name
+/// \param intvl
+///
 void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl) {
     if(QHostAddress(ip).isNull()) {
         QMessageBox::warning(this, "Error", "Invalid IP address");
@@ -217,6 +338,12 @@ void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl) {
     thread->start();
 }
 
+///
+/// \brief IC6Comm::connectTest
+/// \param ip
+/// \param version
+/// \return
+///
 bool IC6Comm::connectTest(const QString& ip, QString* version) {
     QTcpSocket socket;
     socket.setProxy(QNetworkProxy::NoProxy);
@@ -243,16 +370,20 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
     return connected;
 }
 
-
-
+///
+/// \brief IC6Comm::handleDataReceived
+/// \param data
+/// \param name
+///
 void IC6Comm::handleDataReceived(const QByteArray& data, const QString& name) {
+    // qDebug() << Helper::hexFormat(data);
     uint cks   = data.back() & 0xff;
     QByteArray msg_len_ba = data.mid(0, 2);
     int msg_len = Helper::calcMsgLen(msg_len_ba);
     QByteArray msg_body_ba = data.mid(2, msg_len);
     auto cks_ = Helper::calcCks(msg_body_ba);
     QList<int> l_act;
-    QList<float> l_freq;
+    QList<double> l_freq;
     QList<bool> l_stat;
     if(cks == cks_) {
         Helper::calcData(msg_body_ba.mid(2, -1), &l_act, &l_freq, &l_stat);
@@ -260,6 +391,11 @@ void IC6Comm::handleDataReceived(const QByteArray& data, const QString& name) {
     dataHandle(name, l_stat, l_freq, l_act);
 }
 
+///
+/// \brief IC6Comm::handleError
+/// \param error
+/// \param ip
+///
 void IC6Comm::handleError(const QString& error, const QString& ip) {
     // This is available in all editors.
     qDebug() << __FUNCTION__ << QString("[%1] error: %2").arg(ip, error);
