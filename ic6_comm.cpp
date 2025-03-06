@@ -15,6 +15,10 @@ IC6Comm::IC6Comm(QWidget* parent)
     write_pool = new QThreadPool(this);
     write_pool->setMaxThreadCount(QThread::idealThreadCount());
     readConfig();
+    QDir dataDir("data");
+    if (!dataDir.exists()) {
+        dataDir.mkpath(".");
+    }
 }
 
 IC6Comm::~IC6Comm() {
@@ -71,6 +75,9 @@ void IC6Comm::on_tb_start1_clicked() {
         return;
     }
     QString name = ui->le_name1->text();
+    if(!nameCheck(name)) {
+        return;
+    }
     uint intvl = ui->cb_intvl1->currentText().toUInt();
     ui->wd_ip1->setDisabled(true);
     ui->le_name1->setDisabled(true);
@@ -90,6 +97,9 @@ void IC6Comm::on_tb_start2_clicked() {
         return;
     }
     QString name = ui->le_name2->text();
+    if(!nameCheck(name)) {
+        return;
+    }
     uint intvl = ui->cb_intvl2->currentText().toUInt();
     ui->wd_ip2->setDisabled(true);
     ui->le_name2->setDisabled(true);
@@ -146,7 +156,6 @@ void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const Q
         bool state = status.at(var);
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
         QString s_act = state ? QString::number(acts.at(var)) : "0";
-        QString shown = "Freq: " + s_freq + ", Act: " + s_act;
         QString idx = QString::number((var + 1));
         shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
         inst_data_store.append(s_freq);
@@ -171,6 +180,12 @@ void IC6Comm::write_data(InstConfig* inst) {
     inst->data_count_ = 0;
 }
 
+///
+/// \brief IC6Comm::setInstLabel
+/// \param name
+/// \param status
+/// \param data
+///
 void IC6Comm::setInstLabel(const QString& name, const QList<bool>& status, const QStringList& data) {
     auto frame = this->findChild<QFrame*>(name);
     QString ch_s = frame->property("channel").toString();
@@ -190,6 +205,9 @@ void IC6Comm::setInstLabel(const QString& name, const QList<bool>& status, const
     }
 }
 
+///
+/// \brief IC6Comm::readConfig
+///
 void IC6Comm::readConfig() {
     QString path = QCoreApplication::applicationDirPath();
     QSettings m_iniFile = QSettings(path + "/settings.ini", QSettings::IniFormat);
@@ -211,6 +229,9 @@ void IC6Comm::readConfig() {
     ui->le_name2->setText(ch2_name);
 }
 
+///
+/// \brief IC6Comm::writeConfig
+///
 void IC6Comm::writeConfig() {
     QString path = QCoreApplication::applicationDirPath();
     QSettings m_iniFile = QSettings(path + "/settings.ini", QSettings::IniFormat);
@@ -253,6 +274,23 @@ bool IC6Comm::ipDupCheck(const QString& ip) {
         return true;
     }
     return false;
+}
+
+///
+/// \brief IC6Comm::nameCheck
+/// \param name
+/// \return
+///
+bool IC6Comm::nameCheck(const QString& name) {
+    if(name.length() < 2) {
+        QMessageBox::warning(this, "Error", "Name field must be filled in.");
+        return false;
+    }
+    if(threads.contains(name)) {
+        QMessageBox::warning(this, "Error", "Duplicate name.");
+        return false;
+    }
+    return true;
 }
 
 ///

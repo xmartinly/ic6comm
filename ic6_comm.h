@@ -74,7 +74,6 @@ class IC6Comm : public QMainWindow {
     bool inst2_conn_ = false;
 
     QStringList ip_list_;
-    QStringList file_names_;
 
     //数据写入线程池, 此次当单线程使用
     QThreadPool* write_pool;
@@ -83,6 +82,7 @@ class IC6Comm : public QMainWindow {
   private:
     bool connectTest(const QString& ip, QString* version);
     bool ipDupCheck(const QString& ip);
+    bool nameCheck(const QString& name);
     void setStatusbar();
     void startAcq(const QString& ip, const QString& name, uint intvl = 200);
     void stopThread(const QString& ip, const QString& name);
