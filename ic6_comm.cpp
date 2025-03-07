@@ -79,13 +79,14 @@ void IC6Comm::on_tb_start1_clicked() {
         return;
     }
     uint intvl = ui->cb_intvl1->currentText().toUInt();
-    ui->wd_ip1->setDisabled(true);
-    ui->le_name1->setDisabled(true);
-    ui->cb_intvl1->setDisabled(true);
-    startAcq(ip, name, intvl, "1");
-    ip_list_.append(ip);
-    ui->frame1->setObjectName(name);
-    ui->frame1->setProperty("channel", "1");
+    if(startAcq(ip, name, intvl, "1")) {
+        ui->wd_ip1->setDisabled(true);
+        ui->le_name1->setDisabled(true);
+        ui->cb_intvl1->setDisabled(true);
+        ip_list_.append(ip);
+        ui->frame1->setObjectName(name);
+        ui->frame1->setProperty("channel", "1");
+    }
 }
 
 ///
@@ -101,13 +102,15 @@ void IC6Comm::on_tb_start2_clicked() {
         return;
     }
     uint intvl = ui->cb_intvl2->currentText().toUInt();
-    ui->wd_ip2->setDisabled(true);
-    ui->le_name2->setDisabled(true);
-    ui->cb_intvl2->setDisabled(true);
+    if(startAcq(ip, name, intvl, "2")) {
+        ui->wd_ip2->setDisabled(true);
+        ui->le_name2->setDisabled(true);
+        ui->cb_intvl2->setDisabled(true);
+        ip_list_.append(ip);
+        ui->frame1->setObjectName(name);
+        ui->frame1->setProperty("channel", "2");
+    }
     startAcq(ip, name, intvl, "2");
-    ip_list_.append(ip);
-    ui->frame2->setObjectName(name);
-    ui->frame2->setProperty("channel", "2");
 }
 
 ///
@@ -346,16 +349,16 @@ void IC6Comm::setStatusbar() {
 /// \param name
 /// \param intvl
 ///
-void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const QString& ch) {
+bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const QString& ch) {
     if(QHostAddress(ip).isNull()) {
         QMessageBox::warning(this, "Error", "Invalid IP address");
-        return;
+        return false;
     }
     QString version;
     bool connected = connectTest(ip, &version);
     if(!connected) {
         QMessageBox::warning(this, "Error", QString("Can't connect to %1").arg(ip));
-        return;
+        return false;
     }
     // create instrument instacne
     InstConfig* inst = new InstConfig();
@@ -391,6 +394,7 @@ void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     // start thread
     thread->start();
     // qDebug() << threads.count() << devices.count() << ip_list_;
+    return true;
 }
 
 ///

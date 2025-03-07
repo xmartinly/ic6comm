@@ -93,13 +93,12 @@ class IC6Comm : public QMainWindow {
     bool connectTest(const QString& ip, QString* version);
     bool ipDupCheck(const QString& ip);
     bool nameCheck(const QString& name);
+    bool startAcq(const QString& ip, const QString& name, uint intvl = 200, const QString& ch = "1");
     void setStatusbar();
-    void startAcq(const QString& ip, const QString& name, uint intvl = 200, const QString& ch = "1");
     void stopThread(const QString& ip, const QString& name);
     void dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts);
     void writeData(InstConfig* inst);
     void setInstLabel(const QString& name, const QList<bool>& status, const QStringList& data);
-
     void readConfig();
     void writeConfig();
 
