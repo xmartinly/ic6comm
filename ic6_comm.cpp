@@ -19,6 +19,8 @@ IC6Comm::IC6Comm(QWidget* parent)
     if (!dataDir.exists()) {
         dataDir.mkpath(".");
     }
+    // This is available in all editors.
+    // qDebug() << __FUNCTION__ << Helper::calcCmdLen(ba_test) << Helper::calcCks(ba_test);
 }
 
 IC6Comm::~IC6Comm() {
@@ -52,6 +54,8 @@ void IC6Comm::on_act_exit_triggered() {
 /// \brief IC6Comm::on_act_man_triggered
 ///
 void IC6Comm::on_act_man_triggered() {
+    QString qtManulFile = "./074-505-P1J IC6 OM.pdf";
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qtManulFile));
 }
 
 ///
@@ -276,6 +280,11 @@ void IC6Comm::writeDataSize(const QString& name, float size) {
     }
 }
 
+void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name) {
+    // This is available in all editors.
+    qDebug() << __FUNCTION__ << name << status << frequencies << activities;
+}
+
 ///
 /// \brief IC6Comm::ipDupCheck
 /// \param ip
@@ -386,7 +395,8 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     });
     connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    connect(device, &CommWorker::dataReceived, this, &IC6Comm::handleDataReceived);
+    connect(device, &CommWorker::sendData, this, &IC6Comm::getData);
+    // connect(device, &CommWorker::dataReceived, this, &IC6Comm::handleDataReceived);
     connect(device, &CommWorker::errorOccurred, this, &IC6Comm::handleError);
     // store object and thread
     devices.insert(name, device);
@@ -436,19 +446,19 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
 /// \param name
 ///
 void IC6Comm::handleDataReceived(const QByteArray& data, const QString& name) {
-    // qDebug() << Helper::hexFormat(data);
-    uint cks   = data.back() & 0xff;
-    QByteArray msg_len_ba = data.mid(0, 2);
-    int msg_len = Helper::calcMsgLen(msg_len_ba);
-    QByteArray msg_body_ba = data.mid(2, msg_len);
-    auto cks_ = Helper::calcCks(msg_body_ba);
-    QList<int> l_act;
-    QList<double> l_freq;
-    QList<bool> l_stat;
-    if(cks == cks_) {
-        Helper::calcData(msg_body_ba.mid(2, -1), &l_act, &l_freq, &l_stat);
-    }
-    dataHandle(name, l_stat, l_freq, l_act);
+    qDebug() << Helper::hexFormat(data);
+    // uint cks   = data.back() & 0xff;
+    // QByteArray msg_len_ba = data.mid(0, 2);
+    // int msg_len = Helper::calcMsgLen(msg_len_ba);
+    // QByteArray msg_body_ba = data.mid(2, msg_len);
+    // auto cks_ = Helper::calcCks(msg_body_ba);
+    // QList<int> l_act;
+    // QList<double> l_freq;
+    // QList<bool> l_stat;
+    // if(cks == cks_) {
+    //     Helper::calcData(msg_body_ba.mid(2, -1), &l_act, &l_freq, &l_stat);
+    // }
+    // dataHandle(name, l_stat, l_freq, l_act);
 }
 
 ///

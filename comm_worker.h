@@ -24,6 +24,7 @@ class CommWorker: public QObject {
   signals:
     void dataReceived(const QByteArray& data, const QString& ip); // data receive signal
     void errorOccurred(const QString& error, const QString& ip);  // error signal
+    void sendData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
 
   public slots:
     void work();  // scheduled task processing
@@ -40,8 +41,20 @@ class CommWorker: public QObject {
     QString targetIp;
     QString targetName;
     bool isConnected = false;
+    double factor_ic6 = 0.000873114913702011;
+    QList<bool> status_ = {};
+    QList<int> activities_ = {};
+    QList<double> frequencies_ = {};
+    QByteArray ba_test = QByteArray::fromHex("1500534709535303005347095353040053470953530500E7");
 
+  private:
+    QByteArray calcMsg(const QByteArray& resp);
+    QList<double> calcFreq(const QByteArray& resp);
+    QList<int> calcInt(const QByteArray& resp);
+    QList<bool> calcStatus(const QByteArray& resp);
     void connectToHost();
+    void dataHandel(const QByteArray& data);
+    uint calcMsgLen(const QByteArray& len_ba);
 
 };
 

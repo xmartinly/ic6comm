@@ -73,6 +73,8 @@ class IC6Comm : public QMainWindow {
     void on_tb_stop2_clicked();
 
 
+
+
   private:
     Ui::IC6Comm* ui;
 
@@ -87,6 +89,7 @@ class IC6Comm : public QMainWindow {
 
     //数据写入线程池, 此次当单线程使用
     QThreadPool* write_pool;
+    // QByteArray ba_test = QByteArray::fromHex("1500534709535303005347095353040053470953530500E7");
 
 
   private:
@@ -107,6 +110,7 @@ class IC6Comm : public QMainWindow {
     void handleError(const QString& error, const QString& ip);
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);
+    void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
 
   signals:
     void stopWorker();
