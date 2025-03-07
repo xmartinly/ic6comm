@@ -7,7 +7,7 @@
 class WriteData: public QObject, public QRunnable {
     Q_OBJECT
   public:
-    WriteData(const QString& data, const QString& file);
+    WriteData(const QString& data, const QString& file, const QString& name);
     ~WriteData();
 
   protected:
@@ -16,12 +16,15 @@ class WriteData: public QObject, public QRunnable {
   signals:
     // send write file information to main thread
     void emit_write_data_res(const QString&);
+    void emit_file_size(const QString& name, float size);
 
   private:
     // data to be written
     QString data_str;
     // data file name
     QString data_file;
+    // inst name
+    QString inst_name;
 };
 
 #endif // WRITEDATA_H

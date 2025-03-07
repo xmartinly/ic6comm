@@ -59,12 +59,12 @@ void CommWorker::stopWork() {
 /// \brief CommWorker::work
 ///
 void CommWorker::work() {
+    // This is available in all editors.
+    // qDebug() << __FUNCTION__ << QThread::currentThreadId();
     if(isConnected) {
         socket->write(Helper::BA_SNRDATA);
         socket->flush();
     } else {
-        // This is available in all editors.
-        qDebug() << __FUNCTION__ << isConnected;
         connectToHost(); // 尝试重新连接
     }
 }
@@ -84,7 +84,7 @@ void CommWorker::connectToHost() {
 ///
 void CommWorker::handleConnected() {
     isConnected = true;
-    qDebug() << "Connected to" << targetIp;
+    // qDebug() << "Connected to" << targetIp;
 }
 
 ///

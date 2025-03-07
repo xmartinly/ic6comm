@@ -164,17 +164,18 @@ void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const Q
     setInstLabel(name, status, shown_data);
     inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
     if(inst->data_count_ > 50) {
-        write_data(inst);
+        writeData(inst);
     }
 }
 
 ///
-/// \brief IC6Comm::write_data
+/// \brief IC6Comm::writeData
 /// \param inst
 ///
-void IC6Comm::write_data(InstConfig* inst) {
-    WriteData* write_worker = new WriteData(inst->comm_data_, inst->file_name_);
-    connect(write_worker, &WriteData::emit_write_data_res, this, &IC6Comm::app_info_show);
+void IC6Comm::writeData(InstConfig* inst) {
+    WriteData* write_worker = new WriteData(inst->comm_data_, inst->file_name_, inst->inst_name_);
+    connect(write_worker, &WriteData::emit_write_data_res, this, &IC6Comm::appInfoShow);
+    connect(write_worker, &WriteData::emit_file_size, this, &IC6Comm::writeDataSize);
     write_pool->start(write_worker);
     inst->comm_data_.clear();
     inst->data_count_ = 0;
@@ -256,11 +257,20 @@ void IC6Comm::writeConfig() {
 
 
 ///
-/// \brief VgcComm::app_info_show. 状态栏显示信息槽函数.
+/// \brief VgcComm::appInfoShow. 状态栏显示信息槽函数.
 /// \param msg
 ///
-void IC6Comm::app_info_show(const QString& msg) {
+void IC6Comm::appInfoShow(const QString& msg) {
     statusBar()->showMessage(msg, 3000);
+}
+
+void IC6Comm::writeDataSize(const QString& name, float size) {
+    // This is available in all editors.
+    auto inst = inst_list_.find(name).value();
+    if(size > 50) {
+        inst->data_file_count_++;
+        inst->setFileName();
+    }
 }
 
 ///
@@ -303,15 +313,16 @@ void IC6Comm::stopThread(const QString& ip, const QString& name) {
         auto thread = threads.find(ip).value();
         thread->exit();
         thread->wait(100);
-        delete thread;
         threads.remove(ip);
+        delete thread;
     }
     if(devices.contains(name)) {
+        // auto device = devices.find(ip).value();
         devices.remove(name);
     }
     if(inst_list_.contains(name)) {
         auto inst = inst_list_.find(name).value();
-        write_data(inst);
+        writeData(inst);
         inst_list_.remove(name);
         delete inst;
     }
@@ -379,6 +390,7 @@ void IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     threads.insert(ip, thread);
     // start thread
     thread->start();
+    // qDebug() << threads.count() << devices.count() << ip_list_;
 }
 
 ///
