@@ -59,8 +59,10 @@ void CommWorker::stopWork() {
 /// \brief CommWorker::work
 ///
 void CommWorker::work() {
-    // This is available in all editors.
-    // qDebug() << __FUNCTION__ << QThread::currentThreadId();
+    if(connect_try_count_ > 10) {
+        timer_->stop();
+        emit connectError(target_name_);
+    }
     if(is_connected_) {
         socket_->write(ba_command_);
         socket_->flush();
@@ -73,12 +75,17 @@ void CommWorker::work() {
 /// \brief CommWorker::connectToHost
 ///
 void CommWorker::connectToHost() {
+    connect_try_count_++;
     if(socket_->state() == QTcpSocket::UnconnectedState) {
         socket_->connectToHost(target_ip_, 2101); // 假设端口2101
         socket_->waitForConnected(100);
     }
 }
 
+///
+/// \brief CommWorker::dataHandel
+/// \param data
+///
 void CommWorker::dataHandel(const QByteArray& data) {
     bool checksumValid = false;
     if (data.size() >= 4) {
@@ -203,8 +210,6 @@ void CommWorker::handleReadyRead() {
     }
     dataHandel(data);
     emit sendData(status_, frequencies_, activities_, target_name_, data_tm);
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << data_tm;
 }
 
 ///
@@ -212,7 +217,6 @@ void CommWorker::handleReadyRead() {
 /// \param error
 ///
 void CommWorker::handleError(QAbstractSocket::SocketError error) {
-    qDebug() << error;
     QString errorMsg = socket_->errorString();
     emit errorOccurred(errorMsg, target_ip_);
     is_connected_ = false;

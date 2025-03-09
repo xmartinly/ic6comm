@@ -27,6 +27,7 @@ class CommWorker: public QObject {
     void stopWork();               // stop task
 
   signals:
+    void connectError(const QString& name);
     void dataReceived(const QByteArray& data, const QString& ip); // data receive signal
     void errorOccurred(const QString& error, const QString& ip);  // error signal
     void sendData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm);
@@ -47,6 +48,7 @@ class CommWorker: public QObject {
     QString target_name_;
     bool is_connected_ = false;
     double factor_ic6_ = 0.000873114913702011;
+    uint connect_try_count_ = 0;
     QList<bool> status_ = {};
     QList<int> activities_ = {};
     QList<double> frequencies_ = {};
@@ -54,7 +56,6 @@ class CommWorker: public QObject {
 
   private:
     void connectToHost();
-
     void calcFreq(const QByteArray& resp);
     void calcInt(const QByteArray& resp);
     void calcStatus(const QByteArray& resp);

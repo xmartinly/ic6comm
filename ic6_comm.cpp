@@ -27,14 +27,13 @@ IC6Comm::~IC6Comm() {
     writeConfig();
     foreach (auto inst, inst_list_) {
         QString name = inst->inst_name_;
-        QString ip = inst->ip_addr_;
-        stopThread(ip, name);
+        stopThread(name);
     }
-    foreach (auto thread, threads_) {
-        thread->exit();
-        thread->wait();
-        delete thread;
-    }
+    // foreach (auto thread, threads_) {
+    //     thread->exit();
+    //     thread->wait();
+    //     delete thread;
+    // }
     delete ui;
 }
 
@@ -117,7 +116,7 @@ void IC6Comm::on_tb_start2_clicked() {
 void IC6Comm::on_tb_stop1_clicked() {
     QString ip = ui->wd_ip1->getIP();
     QString name = ui->le_name1->text();
-    stopThread(ip, name);
+    stopThread(name);
     ui->wd_ip1->setDisabled(false);
     ui->le_name1->setDisabled(false);
     ui->cb_intvl1->setDisabled(false);
@@ -129,7 +128,7 @@ void IC6Comm::on_tb_stop1_clicked() {
 void IC6Comm::on_tb_stop2_clicked() {
     QString ip = ui->wd_ip2->getIP();
     QString name = ui->le_name2->text();
-    stopThread(ip, name);
+    stopThread(name);
     ui->wd_ip2->setDisabled(false);
     ui->le_name2->setDisabled(false);
     ui->cb_intvl2->setDisabled(false);
@@ -285,6 +284,30 @@ void IC6Comm::writeDataSize(const QString& name, float size) {
 }
 
 ///
+/// \brief IC6Comm::getConnErr
+/// \param name
+///
+void IC6Comm::getConnErr(const QString& name) {
+    // This is available in all editors.
+    qDebug() << __FUNCTION__ << name;
+    InstConfig* inst = inst_list_.find(name).value();
+    if(inst) {
+        QMessageBox::warning(this, "Error", "Instrument connect error after 10 tries.");
+        auto wd_ip = this->findChild<IPAddress*>(QString("wd_ip%1").arg(inst->inst_ch_));
+        wd_ip->setEnabled(true);
+        auto cb_intvl = this->findChild<QComboBox*>(QString("cb_intvl%1").arg(inst->inst_ch_));
+        cb_intvl->setEnabled(true);
+        auto name_le = this->findChild<QLineEdit*>(QString("le_name%1").arg(inst->inst_ch_));
+        name_le->setEnabled(true);
+        auto thread = threads_.find(name).value();
+        auto device = devices_.find(name).value();
+        if(thread && device) {
+            stopThread(name);
+        }
+    }
+}
+
+///
 /// \brief IC6Comm::getData
 /// \param status
 /// \param frequencies
@@ -358,22 +381,24 @@ bool IC6Comm::nameCheck(const QString& inst_name) {
 /// \param ip
 /// \param name
 ///
-void IC6Comm::stopThread(const QString& ip, const QString& inst_name) {
-    if(threads_.contains(ip)) {
-        auto thread = threads_.find(ip).value();
+void IC6Comm::stopThread( const QString& inst_name) {
+    QString ip;
+    if(inst_list_.contains(inst_name)) {
+        auto inst = inst_list_.find(inst_name).value();
+        ip = inst->ip_addr_;
+        writeData(inst);
+        inst_list_.remove(inst_name);
+        delete inst;
+    }
+    if(threads_.contains(inst_name)) {
+        auto thread = threads_.find(inst_name).value();
         thread->exit();
         thread->wait(100);
-        threads_.remove(ip);
+        threads_.remove(inst_name);
         delete thread;
     }
     if(devices_.contains(inst_name)) {
         devices_.remove(inst_name);
-    }
-    if(inst_list_.contains(inst_name)) {
-        auto inst = inst_list_.find(inst_name).value();
-        writeData(inst);
-        inst_list_.remove(inst_name);
-        delete inst;
     }
     if(ip_list_.contains(ip)) {
         ip_list_.removeOne(ip);
@@ -408,6 +433,7 @@ bool IC6Comm::startAcq(const QString& ip, const QString& inst_name, uint intvl, 
     inst->ip_addr_ = ip;
     inst->inst_ver_ = version;
     inst->intvl_ = intvl;
+    inst->inst_ch_ = ch;
     inst->data_count_ = 0;
     inst->setFileName();
     inst_list_.insert(inst_name, inst);
@@ -422,10 +448,11 @@ bool IC6Comm::startAcq(const QString& ip, const QString& inst_name, uint intvl, 
     device->moveToThread(thread);
     // store object and thread
     devices_.insert(inst_name, device);
-    threads_.insert(ip, thread);
+    threads_.insert(inst_name, thread);
     // connect signals and slots
     connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(device, &CommWorker::connectError, this, &IC6Comm::getConnErr);
     connect(device, &CommWorker::sendData, this, &IC6Comm::getData);
     connect(device, &CommWorker::errorOccurred, this, &IC6Comm::handleError);
     connect(thread, &QThread::started, device, [device, intvl]() { // use this as the content

@@ -5,7 +5,7 @@
 #include <QMetaType>
 
 #include "comm_worker.h"
-#include "qtranslator.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -15,6 +15,7 @@ QT_END_NAMESPACE
 
 struct InstConfig {
     QString ip_addr_;
+    QString inst_ch_;
     QString inst_ver_;
     QString inst_name_;
     QString file_name_;
@@ -94,7 +95,7 @@ class IC6Comm : public QMainWindow {
     bool nameCheck(const QString& inst_name);
     bool startAcq(const QString& ip, const QString& inst_name, uint intvl = 200, const QString& ch = "1");
     void setStatusbar();
-    void stopThread(const QString& ip, const QString& inst_name);
+    void stopThread(const QString& inst_name);
     void writeData(InstConfig* inst);
     void setChLabel(const QString& name, const QList<int>& act, const QStringList& data);
     void readConfig();
@@ -107,6 +108,7 @@ class IC6Comm : public QMainWindow {
     void handleError(const QString& error, const QString& ip);
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);
+    void getConnErr(const QString& name);
     void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm);
 
 
