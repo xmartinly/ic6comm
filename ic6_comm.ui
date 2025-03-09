@@ -1099,14 +1099,13 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="act_comm_setting"/>
+    <addaction name="act_open_folder"/>
     <addaction name="act_exit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="act_lang"/>
     <addaction name="act_man"/>
     <addaction name="act_about"/>
    </widget>
@@ -1118,9 +1117,9 @@
     <string notr="true">color: #5B5B5B;</string>
    </property>
   </widget>
-  <action name="act_comm_setting">
+  <action name="act_open_folder">
    <property name="text">
-    <string>CommSetting</string>
+    <string>DataFolder</string>
    </property>
   </action>
   <action name="act_exit">
@@ -1136,11 +1135,6 @@
   <action name="act_about">
    <property name="text">
     <string>About</string>
-   </property>
-  </action>
-  <action name="act_lang">
-   <property name="text">
-    <string>LANG CHS/ENG</string>
    </property>
   </action>
  </widget>

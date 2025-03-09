@@ -5,6 +5,7 @@
 #include <QMetaType>
 
 #include "comm_worker.h"
+#include "qtranslator.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -57,15 +58,14 @@ class IC6Comm : public QMainWindow {
     ~IC6Comm();
 
   private slots:
-    void on_act_comm_setting_triggered();
     void on_act_exit_triggered();
     void on_act_man_triggered();
     void on_act_about_triggered();
-    void on_act_lang_triggered();
     void on_tb_start1_clicked();
     void on_tb_stop1_clicked();
     void on_tb_start2_clicked();
     void on_tb_stop2_clicked();
+    void on_act_open_folder_triggered();
 
   private:
     Ui::IC6Comm* ui;
@@ -77,6 +77,7 @@ class IC6Comm : public QMainWindow {
     QStringList ip_list_;
     QString ch_data_str_ = "Freq: %1, Act: %2";
     const QByteArray BA_HELLO_ = QByteArray::fromHex("0200480149");
+
 
   private:
     bool connectTest(const QString& ip, QString* version);
@@ -92,11 +93,14 @@ class IC6Comm : public QMainWindow {
     void initCirWidget();
     uint calcChannels(uint chs);
 
+
   private slots:
     void handleError(const QString& error, const QString& ip);
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);
     void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
+
+
 
 };
 #endif // IC6_COMM_H

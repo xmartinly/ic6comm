@@ -1,8 +1,7 @@
 ﻿#include "ic6_comm.h"
 
 #include <QApplication>
-#include <QLocale>
-#include <QTranslator>
+
 
 
 #ifdef VLD_MODULE
@@ -21,15 +20,6 @@ int main(int argc, char* argv[]) {
     if(qss.isOpen()) {
         a.setStyleSheet(qss.readAll());
         qss.close();
-    }
-    QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString& locale : uiLanguages) {
-        const QString baseName = "ic6comm_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
-            break;
-        }
     }
     IC6Comm w;
     w.show();

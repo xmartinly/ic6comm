@@ -38,11 +38,7 @@ IC6Comm::~IC6Comm() {
     delete ui;
 }
 
-///
-/// \brief IC6Comm::on_act_comm_setting_triggered
-///
-void IC6Comm::on_act_comm_setting_triggered() {
-}
+
 ///
 /// \brief IC6Comm::on_act_exit_triggered
 ///
@@ -66,11 +62,6 @@ void IC6Comm::on_act_man_triggered() {
 void IC6Comm::on_act_about_triggered() {
 }
 
-///
-/// \brief IC6Comm::on_act_lang_triggered
-///
-void IC6Comm::on_act_lang_triggered() {
-}
 
 ///
 /// \brief IC6Comm::on_tb_start1_clicked
@@ -140,6 +131,17 @@ void IC6Comm::on_tb_stop2_clicked() {
     ui->wd_ip2->setDisabled(false);
     ui->le_name2->setDisabled(false);
     ui->cb_intvl2->setDisabled(false);
+}
+
+///
+/// \brief IC6Comm::on_act_open_folder_triggered
+///
+void IC6Comm::on_act_open_folder_triggered() {
+    QString data_dir = QDir::currentPath() + "/data/";
+    QDir dir = QDir(data_dir);
+    if (dir.exists()) {
+        QDesktopServices::openUrl(QUrl(data_dir));
+    }
 }
 
 ///
@@ -262,6 +264,7 @@ uint IC6Comm::calcChannels(uint chs) {
     }
     return ch_count_ * 2;
 }
+\
 
 ///
 /// \brief VgcComm::appInfoShow. 状态栏显示信息槽函数.
@@ -383,7 +386,6 @@ void IC6Comm::setStatusbar() {
     statusBar()->addPermanentWidget(labCellIndex);
 }
 
-
 ///
 /// \brief IC6Comm::startAcq
 /// \param ip
@@ -477,5 +479,8 @@ void IC6Comm::handleError(const QString& error, const QString& ip) {
     // This is available in all editors.
     qDebug() << __FUNCTION__ << QString("[%1] error: %2").arg(ip, error);
 }
+
+
+
 
 
