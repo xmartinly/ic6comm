@@ -20,6 +20,8 @@ IC6Comm::IC6Comm(QWidget* parent)
         dataDir.mkpath(".");
     }
     initCirWidget();
+    // This is available in all editors.
+    // qDebug() << __FUNCTION__ << calcChannels(0x14);
 }
 
 IC6Comm::~IC6Comm() {
@@ -245,6 +247,20 @@ void IC6Comm::initCirWidget() {
     }
 }
 
+///
+/// \brief IC6Comm::calcChannels
+/// \param chs
+/// \return
+///
+uint IC6Comm::calcChannels(uint chs) {
+    uint ch_count = chs & 0x0f;
+    uint ch_count_ = 0;
+    while (ch_count) {
+        ch_count_++;
+        ch_count = ch_count >> 1;
+    }
+    return ch_count_ * 2;
+}
 
 ///
 /// \brief VgcComm::appInfoShow. 状态栏显示信息槽函数.

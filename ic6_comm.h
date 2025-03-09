@@ -90,6 +90,7 @@ class IC6Comm : public QMainWindow {
     void readConfig();
     void writeConfig();
     void initCirWidget();
+    uint calcChannels(uint chs);
 
   private slots:
     void handleError(const QString& error, const QString& ip);
