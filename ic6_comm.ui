@@ -41,6 +41,12 @@
    <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,1,99,99">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
       <item row="1" column="1">
        <widget class="QComboBox" name="cb_intvl1">
         <property name="minimumSize">
