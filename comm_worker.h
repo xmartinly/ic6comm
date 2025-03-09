@@ -4,12 +4,18 @@
 #include <QObject>
 #include <QWidget>
 
-struct CygResp {
-    QString version_;
-    QList<int> activity_;
-    QList<double> frequency_;
-    QList<int> crystal_ok_;
-};
+// struct CygInst {
+//     QString ip_;
+//     QString name_;
+//     uint acq_interval_;
+//     QByteArray ba_cmd_;
+//     QString last_data_tm_;
+//     QStringList status_;
+//     QStringList frequencies_;
+//     QStringList activities_;
+//     //
+//     bool is_connected_;
+// };
 
 
 class CommWorker: public QObject {
@@ -36,25 +42,24 @@ class CommWorker: public QObject {
 
 
   private:
-    QTcpSocket* socket;
-    QTimer* timer;
-    QString targetIp;
-    QString targetName;
-    bool isConnected = false;
-    double factor_ic6 = 0.000873114913702011;
+    QTcpSocket* socket_;
+    QTimer* timer_;
+    QString target_ip_;
+    QString target_name_;
+    bool is_connected_ = false;
+    double factor_ic6_ = 0.000873114913702011;
     QList<bool> status_ = {};
     QList<int> activities_ = {};
     QList<double> frequencies_ = {};
-    QByteArray ba_test = QByteArray::fromHex("1500534709535303005347095353040053470953530500E7");
+    QByteArray ba_command_ = QByteArray::fromHex("1500534709535303005347095353040053470953530500E7");
 
   private:
-    QByteArray calcMsg(const QByteArray& resp);
+    void connectToHost();
+
     void calcFreq(const QByteArray& resp);
     void calcInt(const QByteArray& resp);
     void calcStatus(const QByteArray& resp);
-    void connectToHost();
     void dataHandel(const QByteArray& data);
-    uint calcMsgLen(const QByteArray& len_ba);
 
 };
 

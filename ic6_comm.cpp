@@ -1,6 +1,7 @@
 ﻿#include "ic6_comm.h"
 #include "ui_ic6_comm.h"
 #include "utility/write_data.h"
+#include "utility/circle_widget.h"
 
 IC6Comm::IC6Comm(QWidget* parent)
     : QMainWindow(parent)

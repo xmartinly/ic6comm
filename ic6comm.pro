@@ -14,6 +14,7 @@ SOURCES += \
     ic6_comm.cpp \
     thirdparty/ipaddress.cpp \
     utility/helper.cpp \
+    utility/circle_widget.cpp \
     utility/write_data.cpp
 
 HEADERS += \
@@ -22,6 +23,7 @@ HEADERS += \
     ic6_comm.h \
     thirdparty/ipaddress.h \
     utility/helper.h \
+    utility/circle_widget.h \
     utility/write_data.h
 
 FORMS += \
