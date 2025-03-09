@@ -291,7 +291,7 @@ void IC6Comm::writeDataSize(const QString& name, float size) {
 /// \param activities
 /// \param name
 ///
-void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name) {
+void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm) {
     if(!inst_list_.contains(name)) {
         return;
     }
@@ -303,7 +303,7 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
     QStringList inst_data_store;
     QStringList shown_data;
     int data_cnt = status.count();
-    QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
+    // QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     for (int var = 0; var < data_cnt; ++var) {
         bool state = status.at(var);
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
@@ -312,7 +312,7 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         inst_data_store.append(s_freq);
         inst_data_store.append(s_act);
     }
-    inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
+    inst->comm_data_.append(data_tm + "," + inst_data_store.join(",") + "\n");
     if(inst->data_count_ > inst->write_threshold_) { // write data every 10 seconds
         writeData(inst);
     }

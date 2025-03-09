@@ -107,7 +107,7 @@ class IC6Comm : public QMainWindow {
     void handleError(const QString& error, const QString& ip);
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);
-    void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
+    void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm);
 
 
 

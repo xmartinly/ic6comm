@@ -29,7 +29,7 @@ class CommWorker: public QObject {
   signals:
     void dataReceived(const QByteArray& data, const QString& ip); // data receive signal
     void errorOccurred(const QString& error, const QString& ip);  // error signal
-    void sendData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
+    void sendData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm);
 
   public slots:
     void work();  // scheduled task processing

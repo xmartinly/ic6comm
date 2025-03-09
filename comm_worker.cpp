@@ -200,8 +200,9 @@ void CommWorker::handleReadyRead() {
     if(data.length() < 7) {
         return;
     }
+    QString data_tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     dataHandel(data);
-    emit sendData(status_, frequencies_, activities_, target_name_);
+    emit sendData(status_, frequencies_, activities_, target_name_, data_tm);
 }
 
 ///
