@@ -22,6 +22,7 @@ class CircleWidget : public QWidget {
     const int BLUE_VAL_ = 0;
     int red_val_ = 0;
     const QColor RED_COLOR_ = QColor::fromRgb(204, 51, 0);
+    const QColor GRAY_COLOR_ = QColor::fromRgb(230, 230, 230);
 
 };
 

@@ -17,7 +17,6 @@
 //     bool is_connected_;
 // };
 
-
 class CommWorker: public QObject {
     Q_OBJECT
   public:

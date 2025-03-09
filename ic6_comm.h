@@ -68,19 +68,13 @@ class IC6Comm : public QMainWindow {
   private:
     Ui::IC6Comm* ui;
 
+    QThreadPool* write_pool;
     QMap<QString, CommWorker*> devices; // QMap to store workers
     QMap<QString, QThread*> threads; // QMap to store threads
     QMap<QString, InstConfig*> inst_list_;
-
-    bool inst1_conn_ = false;
-    bool inst2_conn_ = false;
-
     QStringList ip_list_;
-
-    //数据写入线程池, 此次当单线程使用
-    QThreadPool* write_pool;
-    // QByteArray ba_test = QByteArray::fromHex("1500534709535303005347095353040053470953530500E7");
-
+    QString ch_data_str_ = "Freq: %1, Act: %2";
+    const QByteArray BA_HELLO_ = QByteArray::fromHex("0200480149");
 
   private:
     bool connectTest(const QString& ip, QString* version);
@@ -100,9 +94,6 @@ class IC6Comm : public QMainWindow {
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);
     void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
-
-  signals:
-    void stopWorker();
 
 
 };

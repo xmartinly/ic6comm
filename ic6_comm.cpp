@@ -10,12 +10,8 @@ IC6Comm::IC6Comm(QWidget* parent)
     qRegisterMetaType<QList<bool>>("QList<bool>");
     qRegisterMetaType<QList<int>>("QList<int>");
     qRegisterMetaType<QList<double>>("QList<double>");
-    // ui->splitter->setStretchFactor(0, 5);
-    // ui->splitter->setStretchFactor(1, 7);
     setStatusbar();
     statusBar()->showMessage("ShowMessage", 2000);
-    // ui->wd_ip1->setIP("127.0.0.1");
-    // ui->wd_ip2->setIP("172.16.6.137");
     write_pool = new QThreadPool(this);
     write_pool->setMaxThreadCount(QThread::idealThreadCount());
     readConfig();
@@ -24,8 +20,6 @@ IC6Comm::IC6Comm(QWidget* parent)
         dataDir.mkpath(".");
     }
     initCirWidget();
-    // This is available in all editors.
-    // qDebug() << __FUNCTION__ << Helper::calcCmdLen(ba_test) << Helper::calcCks(ba_test);
 }
 
 IC6Comm::~IC6Comm() {
@@ -269,6 +263,13 @@ void IC6Comm::writeDataSize(const QString& name, float size) {
     }
 }
 
+///
+/// \brief IC6Comm::getData
+/// \param status
+/// \param frequencies
+/// \param activities
+/// \param name
+///
 void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name) {
     if(!inst_list_.contains(name)) {
         return;
@@ -287,7 +288,7 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
         QString s_act = state ? QString::number(activities.at(var)) : "0";
         QString idx = QString::number((var + 1));
-        shown_data.append(QString("Freq: %2, Act: %3").arg(s_freq, s_act));
+        shown_data.append(ch_data_str_.arg(s_freq, s_act));
         inst_data_store.append(s_freq);
         inst_data_store.append(s_act);
     }
@@ -435,14 +436,13 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
     QString version_;
     connect(&socket, &QTcpSocket::readyRead, [&socket, &version_]() {
         QByteArray resp = socket.readAll();
-        qDebug() << Helper::hexFormat(resp);
         int resp_len = resp.length();
         version_ = QString(resp.mid(5, resp_len - 5));
     });
     bool connected = socket.state() == QTcpSocket::ConnectedState;
     if(connected) {
         connected = true;
-        socket.write(Helper::BA_HELLO);
+        socket.write(BA_HELLO_);
         socket.flush();
     }
     socket.waitForReadyRead(200);

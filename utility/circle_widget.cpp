@@ -28,7 +28,8 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     int red_val = 255 - red_factor_ * w_value;
     circleColor = QColor(red_val, GREEN_VAL_, BLUE_VAL_);
     if (w_value < 1) {
-        circleColor = QColor(50, 0, 0);
+        circleColor = RED_COLOR_;
+        // circleColor = QColor(243, 129, 129);
     }
     // 绘制圆形
     painter.setPen(Qt::NoPen);
@@ -42,7 +43,8 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     font.setPixelSize(radius * 1.4);
     painter.setFont(font);
     if (w_value < 1) {
-        painter.setPen(RED_COLOR_);
+        // painter.setPen(QColor(254, 255, 228));
+        painter.setPen(GRAY_COLOR_);
     }
     QString text = QString::number(w_index_);
     QRect textRect = painter.fontMetrics().boundingRect(text);

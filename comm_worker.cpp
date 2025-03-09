@@ -193,10 +193,13 @@ void CommWorker::handleConnected() {
 /// \brief CommWorker::handleReadyRead
 ///
 void CommWorker::handleReadyRead() {
-    QByteArray data = socket_->readAll();
-    status_ = {};
-    activities_ = {};
-    frequencies_ = {};
+    QByteArray data;
+    while(socket_->bytesAvailable()) {
+        data += socket_->readAll();
+    }
+    if(data.length() < 7) {
+        return;
+    }
     dataHandel(data);
     emit sendData(status_, frequencies_, activities_, target_name_);
 }
@@ -206,6 +209,7 @@ void CommWorker::handleReadyRead() {
 /// \param error
 ///
 void CommWorker::handleError(QAbstractSocket::SocketError error) {
+    qDebug() << error;
     QString errorMsg = socket_->errorString();
     emit errorOccurred(errorMsg, target_ip_);
     is_connected_ = false;
