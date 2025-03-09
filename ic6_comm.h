@@ -80,11 +80,11 @@ class IC6Comm : public QMainWindow {
 
   private:
     bool connectTest(const QString& ip, QString* version);
-    bool ipDupCheck(const QString& ip);
-    bool nameCheck(const QString& name);
-    bool startAcq(const QString& ip, const QString& name, uint intvl = 200, const QString& ch = "1");
+    bool instIpCheck(const QString& ip);
+    bool nameCheck(const QString& inst_name);
+    bool startAcq(const QString& ip, const QString& inst_name, uint intvl = 200, const QString& ch = "1");
     void setStatusbar();
-    void stopThread(const QString& ip, const QString& name);
+    void stopThread(const QString& ip, const QString& inst_name);
     void writeData(InstConfig* inst);
     void setChLabel(const QString& name, const QList<int>& act, const QStringList& data);
     void readConfig();

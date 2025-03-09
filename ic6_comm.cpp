@@ -15,9 +15,9 @@ IC6Comm::IC6Comm(QWidget* parent)
     write_pool_ = new QThreadPool(this);
     write_pool_->setMaxThreadCount(QThread::idealThreadCount() / 2);
     readConfig();
-    QDir dataDir("data");
-    if (!dataDir.exists()) {
-        dataDir.mkpath(".");
+    QDir data_dir("data");
+    if (!data_dir.exists()) {
+        data_dir.mkpath(".");
     }
     initCirWidget();
     // This is available in all editors.
@@ -76,20 +76,20 @@ void IC6Comm::on_act_lang_triggered() {
 ///
 void IC6Comm::on_tb_start1_clicked() {
     QString ip = ui->wd_ip1->getIP();
-    if(ipDupCheck(ip)) {
+    if(!instIpCheck(ip)) {
         return;
     }
-    QString name = ui->le_name1->text();
-    if(!nameCheck(name)) {
+    QString inst_name = ui->le_name1->text();
+    if(!nameCheck(inst_name)) {
         return;
     }
     uint intvl = ui->cb_intvl1->currentText().toUInt();
-    if(startAcq(ip, name, intvl, "1")) {
+    if(startAcq(ip, inst_name, intvl, "1")) {
         ui->wd_ip1->setDisabled(true);
         ui->le_name1->setDisabled(true);
         ui->cb_intvl1->setDisabled(true);
         ip_list_.append(ip);
-        ui->frame1->setObjectName(name);
+        ui->frame1->setObjectName(inst_name);
         ui->frame1->setProperty("channel", "1");
     }
 }
@@ -99,7 +99,7 @@ void IC6Comm::on_tb_start1_clicked() {
 ///
 void IC6Comm::on_tb_start2_clicked() {
     QString ip = ui->wd_ip2->getIP();
-    if(ipDupCheck(ip)) {
+    if(!instIpCheck(ip)) {
         return;
     }
     QString name = ui->le_name2->text();
@@ -314,16 +314,20 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
 }
 
 ///
-/// \brief IC6Comm::ipDupCheck
+/// \brief IC6Comm::instIpCheck
 /// \param ip
 /// \return
 ///
-bool IC6Comm::ipDupCheck(const QString& ip) {
+bool IC6Comm::instIpCheck(const QString& ip) {
+    if(QHostAddress(ip).isNull()) {
+        QMessageBox::warning(this, "Error", "Invalid IP address");
+        return false;
+    }
     if(ip_list_.contains(ip)) {
         QMessageBox::warning(this, "Error", "Duplicate IP address");
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 ///
@@ -331,12 +335,12 @@ bool IC6Comm::ipDupCheck(const QString& ip) {
 /// \param name
 /// \return
 ///
-bool IC6Comm::nameCheck(const QString& name) {
-    if(name.length() < 2) {
+bool IC6Comm::nameCheck(const QString& inst_name) {
+    if(inst_name.length() < 2) {
         QMessageBox::warning(this, "Error", "Name field must be filled in.");
         return false;
     }
-    if(threads_.contains(name)) {
+    if(threads_.contains(inst_name)) {
         QMessageBox::warning(this, "Error", "Duplicate name.");
         return false;
     }
@@ -348,7 +352,7 @@ bool IC6Comm::nameCheck(const QString& name) {
 /// \param ip
 /// \param name
 ///
-void IC6Comm::stopThread(const QString& ip, const QString& name) {
+void IC6Comm::stopThread(const QString& ip, const QString& inst_name) {
     if(threads_.contains(ip)) {
         auto thread = threads_.find(ip).value();
         thread->exit();
@@ -356,14 +360,13 @@ void IC6Comm::stopThread(const QString& ip, const QString& name) {
         threads_.remove(ip);
         delete thread;
     }
-    if(devices_.contains(name)) {
-        // auto device = devices.find(ip).value();
-        devices_.remove(name);
+    if(devices_.contains(inst_name)) {
+        devices_.remove(inst_name);
     }
-    if(inst_list_.contains(name)) {
-        auto inst = inst_list_.find(name).value();
+    if(inst_list_.contains(inst_name)) {
+        auto inst = inst_list_.find(inst_name).value();
         writeData(inst);
-        inst_list_.remove(name);
+        inst_list_.remove(inst_name);
         delete inst;
     }
     if(ip_list_.contains(ip)) {
@@ -386,11 +389,7 @@ void IC6Comm::setStatusbar() {
 /// \param name
 /// \param intvl
 ///
-bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const QString& ch) {
-    if(QHostAddress(ip).isNull()) {
-        QMessageBox::warning(this, "Error", "Invalid IP address");
-        return false;
-    }
+bool IC6Comm::startAcq(const QString& ip, const QString& inst_name, uint intvl, const QString& ch) {
     QString version;
     bool connected = connectTest(ip, &version);
     if(!connected) {
@@ -400,24 +399,24 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     // create instrument instacne
     InstConfig* inst = new InstConfig();
     auto lbl = this->findChild<QLabel*>(QString("ch%1_%2").arg(ch, "info"));
-    inst->inst_name_ = name;
+    inst->inst_name_ = inst_name;
     inst->ip_addr_ = ip;
     inst->inst_ver_ = version;
     inst->intvl_ = intvl;
     inst->data_count_ = 0;
     inst->setFileName();
-    inst_list_.insert(name, inst);
+    inst_list_.insert(inst_name, inst);
     if(lbl) {
-        lbl->setText(QString("Inst%1#: %2, %3, %4").arg(ch, name, version, ip));
+        lbl->setText(QString("Inst%1#: %2, %3, %4").arg(ch, inst_name, version, ip));
         lbl->setToolTip(QString("Data File: %1").arg(inst->file_name_));
     }
     // craete communication object and thread
     QThread* thread = new QThread;
-    CommWorker* device = new CommWorker(ip, name);
+    CommWorker* device = new CommWorker(ip, inst_name);
     // move object to thread
     device->moveToThread(thread);
     // store object and thread
-    devices_.insert(name, device);
+    devices_.insert(inst_name, device);
     threads_.insert(ip, thread);
     // connect signals and slots
     connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
