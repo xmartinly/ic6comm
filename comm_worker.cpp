@@ -119,8 +119,8 @@ void CommWorker::dataHandel(const QByteArray& data) {
         return;
     }
     calcStatus(splitParts.at(0));
-    calcInt(splitParts.at(2));
     calcFreq(splitParts.at(1));
+    calcInt(splitParts.at(2));
 }
 
 
@@ -131,12 +131,13 @@ void CommWorker::dataHandel(const QByteArray& data) {
 /// \return
 ///
 void CommWorker::calcFreq(const QByteArray& resp) {
-    frequencies_ = {};
+    frequencies_.clear();
     int resp_len = resp.length();
+    int freq_ba_len = resp_len / 8;
     if(resp_len % 8) {
         return;
     }
-    for (int var = 0; var < resp_len; ++var) {
+    for (int var = 0; var < freq_ba_len; ++var) {
         QByteArray freq_ba = resp.mid(8 * var, 8);
         QDataStream stream(freq_ba);
         stream.setByteOrder(QDataStream::LittleEndian);
@@ -152,12 +153,13 @@ void CommWorker::calcFreq(const QByteArray& resp) {
 /// \return
 ///
 void CommWorker::calcInt(const QByteArray& resp) {
-    activities_ = {};
+    activities_ .clear();
     int resp_len = resp.length();
+    int act_ba_len = resp_len / 4;
     if(resp_len % 4) {
         return;
     }
-    for (int var = 0; var < resp_len; ++var) {
+    for (int var = 0; var < act_ba_len; ++var) {
         QByteArray act_ba = resp.mid(4 * var, 4);
         QDataStream stream(act_ba);
         stream.setByteOrder(QDataStream::LittleEndian);
@@ -173,7 +175,7 @@ void CommWorker::calcInt(const QByteArray& resp) {
 /// \return
 ///
 void CommWorker::calcStatus(const QByteArray& resp) {
-    status_ = {};
+    status_.clear();
     foreach (auto c, resp) {
         status_.append( (c & 1) == 0);
     }

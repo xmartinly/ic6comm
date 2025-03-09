@@ -46,8 +46,6 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     }
     QString text = QString::number(w_index_);
     QRect textRect = painter.fontMetrics().boundingRect(text);
-    // This is customer debug information.
-    qDebug() << __FUNCTION__ << center;
     textRect.moveCenter(center);
     painter.drawText(textRect, Qt::AlignCenter, text);
 }

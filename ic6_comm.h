@@ -56,25 +56,14 @@ class IC6Comm : public QMainWindow {
 
   private slots:
     void on_act_comm_setting_triggered();
-
     void on_act_exit_triggered();
-
     void on_act_man_triggered();
-
     void on_act_about_triggered();
-
     void on_act_lang_triggered();
-
     void on_tb_start1_clicked();
-
     void on_tb_stop1_clicked();
-
     void on_tb_start2_clicked();
-
     void on_tb_stop2_clicked();
-
-
-
 
   private:
     Ui::IC6Comm* ui;
@@ -101,12 +90,12 @@ class IC6Comm : public QMainWindow {
     void setStatusbar();
     void stopThread(const QString& ip, const QString& name);
     void writeData(InstConfig* inst);
-    void setChLabel(const QString& name, const QList<bool>& status, const QStringList& data);
+    void setChLabel(const QString& name, const QList<int>& act, const QStringList& data);
     void readConfig();
     void writeConfig();
+    void initCirWidget();
 
   private slots:
-
     void handleError(const QString& error, const QString& ip);
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);

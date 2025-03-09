@@ -23,6 +23,7 @@ IC6Comm::IC6Comm(QWidget* parent)
     if (!dataDir.exists()) {
         dataDir.mkpath(".");
     }
+    initCirWidget();
     // This is available in all editors.
     // qDebug() << __FUNCTION__ << Helper::calcCmdLen(ba_test) << Helper::calcCks(ba_test);
 }
@@ -197,22 +198,22 @@ void IC6Comm::writeData(InstConfig* inst) {
 /// \param status
 /// \param data
 ///
-void IC6Comm::setChLabel(const QString& name, const QList<bool>& status, const QStringList& data) {
+void IC6Comm::setChLabel(const QString& name, const QList<int>& acts, const QStringList& data) {
     auto frame = this->findChild<QFrame*>(name);
     QString ch_s = frame->property("channel").toString();
-    int ch_count = status.count();
+    int ch_count = acts.count();
     for (int var = 0; var < ch_count; ++var) {
         QString idx_s = QString::number(var + 1);
-        QString svg_ok_name = QString(":/Picture/svg/wm_circled_%1_c.svg").arg(idx_s);
-        QString svg_ng_name = QString(":/Picture/svg/wm_circled_%1.svg").arg(idx_s);
-        QPixmap pixmap(status.at(var) ? svg_ok_name : svg_ng_name);
-        pixmap.setDevicePixelRatio(devicePixelRatio());
         QString data_lb_name = QString("ch%1_%2").arg(ch_s, idx_s);
-        QString icon_lb_name = QString("xtal%1_%2").arg(ch_s, idx_s);
-        auto icon_label = frame->findChild<QLabel*>(icon_lb_name);
+        QString cir_wd_name = QString("xtal%1_%2").arg(ch_s, idx_s);
         auto data_label = frame->findChild<QLabel*>(data_lb_name);
-        data_label->setText(data.at(var));
-        icon_label->setPixmap(pixmap);
+        auto cir_wd = frame->findChild<CircleWidget*>(cir_wd_name);
+        if(data_label) {
+            data_label->setText(data.at(var));
+        }
+        if(cir_wd) {
+            cir_wd->setValue(acts.at(var));
+        }
     }
 }
 
@@ -265,6 +266,25 @@ void IC6Comm::writeConfig() {
     m_iniFile.endGroup();
 }
 
+///
+/// \brief IC6Comm::initCirWidget
+///
+void IC6Comm::initCirWidget() {
+    QString frm1_wd_prefix = "xtal1_%1";
+    QString frm2_wd_prefix = "xtal2_%1";
+    QFrame* frame1 = ui->frame1;
+    QFrame* frame2 = ui->frame2;
+    for (int var = 1; var < 9; ++var) {
+        QString idx = QString::number(var);
+        QString wd1_name = frm1_wd_prefix.arg(idx);
+        QString wd2_name = frm2_wd_prefix.arg(idx);
+        auto wd1 = frame1->findChild<CircleWidget*>(wd1_name);
+        auto wd2 = frame2->findChild<CircleWidget*>(wd2_name);
+        wd1->setIndex(var);
+        wd2->setIndex(var);
+    }
+}
+
 
 ///
 /// \brief VgcComm::appInfoShow. 状态栏显示信息槽函数.
@@ -309,7 +329,9 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
     if(inst->data_count_ > 50) {
         writeData(inst);
     }
-    setChLabel(name, status, shown_data);
+    setChLabel(name, activities, shown_data);
+    // This is available in all editors.
+    // qDebug() << __FUNCTION__ << activities << frequencies << status;
 }
 
 ///
