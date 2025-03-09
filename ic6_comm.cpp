@@ -60,6 +60,7 @@ void IC6Comm::on_act_man_triggered() {
 /// \brief IC6Comm::on_act_about_triggered
 ///
 void IC6Comm::on_act_about_triggered() {
+    QMessageBox::information(this, "About", ABOUT_INFO_.join("\n"));
 }
 
 
@@ -382,7 +383,7 @@ void IC6Comm::stopThread(const QString& ip, const QString& inst_name) {
 /// \brief IC6Comm::setStatusbar
 ///
 void IC6Comm::setStatusbar() {
-    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.0.0", this);
+    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.0.4", this);
     statusBar()->addPermanentWidget(labCellIndex);
 }
 

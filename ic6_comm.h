@@ -58,6 +58,7 @@ class IC6Comm : public QMainWindow {
     ~IC6Comm();
 
   private slots:
+    void on_act_open_folder_triggered();
     void on_act_exit_triggered();
     void on_act_man_triggered();
     void on_act_about_triggered();
@@ -65,7 +66,7 @@ class IC6Comm : public QMainWindow {
     void on_tb_stop1_clicked();
     void on_tb_start2_clicked();
     void on_tb_stop2_clicked();
-    void on_act_open_folder_triggered();
+
 
   private:
     Ui::IC6Comm* ui;
@@ -77,6 +78,14 @@ class IC6Comm : public QMainWindow {
     QStringList ip_list_;
     QString ch_data_str_ = "Freq: %1, Act: %2";
     const QByteArray BA_HELLO_ = QByteArray::fromHex("0200480149");
+    const QStringList ABOUT_INFO_ = {
+        "2025/03/05 v1.0.0 \tFirst release.",
+        "2025/03/07 v1.0.1 \tChange write file function to 10s.",
+        "2025/03/07 v1.0.2 \tChange data calculation to thread.",
+        "2025/03/07 v1.0.3 \tChange crystal icon to dynamic widget.",
+        "2025/03/08 v1.0.4 \tRedesign UI.",
+        "2025/03/09 v1.1.0 \tRelease the first version. Connect function bug fixed.",
+    };
 
 
   private:
