@@ -79,7 +79,7 @@ class IC6Comm : public QMainWindow {
     QString ch_data_str_ = "Freq: %1, Act: %2";
     const QByteArray BA_HELLO_ = QByteArray::fromHex("0200480149");
     const QStringList ABOUT_INFO_ = {
-        "2025/03/05 v1.0.0 \tFirst release.",
+        "2025/03/05 v1.0.0 \tBeta release.",
         "2025/03/07 v1.0.1 \tChange write file function to 10s.",
         "2025/03/07 v1.0.2 \tChange data calculation to thread.",
         "2025/03/07 v1.0.3 \tChange crystal icon to dynamic widget.",
