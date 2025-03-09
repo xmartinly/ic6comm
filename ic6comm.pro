@@ -28,7 +28,9 @@ FORMS += \
     ic6_comm.ui
 
 TRANSLATIONS += \
-    ic6comm_zh_CN.ts
+    ic6comm_zh_CN.ts \
+    ic6comm_en_US.ts
+
 CONFIG += lrelease
 CONFIG += embed_translations
 
