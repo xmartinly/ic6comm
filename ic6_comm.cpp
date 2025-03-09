@@ -12,8 +12,8 @@ IC6Comm::IC6Comm(QWidget* parent)
     qRegisterMetaType<QList<double>>("QList<double>");
     setStatusbar();
     statusBar()->showMessage("ShowMessage", 2000);
-    write_pool = new QThreadPool(this);
-    write_pool->setMaxThreadCount(QThread::idealThreadCount());
+    write_pool_ = new QThreadPool(this);
+    write_pool_->setMaxThreadCount(QThread::idealThreadCount() / 2);
     readConfig();
     QDir dataDir("data");
     if (!dataDir.exists()) {
@@ -31,7 +31,7 @@ IC6Comm::~IC6Comm() {
         QString ip = inst->ip_addr_;
         stopThread(ip, name);
     }
-    foreach (auto thread, threads) {
+    foreach (auto thread, threads_) {
         thread->exit();
         thread->wait();
         delete thread;
@@ -149,7 +149,7 @@ void IC6Comm::writeData(InstConfig* inst) {
     WriteData* write_worker = new WriteData(inst->comm_data_, inst->file_name_, inst->inst_name_);
     connect(write_worker, &WriteData::emit_write_data_res, this, &IC6Comm::appInfoShow);
     connect(write_worker, &WriteData::emit_file_size, this, &IC6Comm::writeDataSize);
-    write_pool->start(write_worker);
+    write_pool_->start(write_worker);
     inst->comm_data_.clear();
     inst->data_count_ = 0;
 }
@@ -336,7 +336,7 @@ bool IC6Comm::nameCheck(const QString& name) {
         QMessageBox::warning(this, "Error", "Name field must be filled in.");
         return false;
     }
-    if(threads.contains(name)) {
+    if(threads_.contains(name)) {
         QMessageBox::warning(this, "Error", "Duplicate name.");
         return false;
     }
@@ -349,16 +349,16 @@ bool IC6Comm::nameCheck(const QString& name) {
 /// \param name
 ///
 void IC6Comm::stopThread(const QString& ip, const QString& name) {
-    if(threads.contains(ip)) {
-        auto thread = threads.find(ip).value();
+    if(threads_.contains(ip)) {
+        auto thread = threads_.find(ip).value();
         thread->exit();
         thread->wait(100);
-        threads.remove(ip);
+        threads_.remove(ip);
         delete thread;
     }
-    if(devices.contains(name)) {
+    if(devices_.contains(name)) {
         // auto device = devices.find(ip).value();
-        devices.remove(name);
+        devices_.remove(name);
     }
     if(inst_list_.contains(name)) {
         auto inst = inst_list_.find(name).value();
@@ -417,8 +417,8 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     // move object to thread
     device->moveToThread(thread);
     // store object and thread
-    devices.insert(name, device);
-    threads.insert(ip, thread);
+    devices_.insert(name, device);
+    threads_.insert(ip, thread);
     // connect signals and slots
     connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);

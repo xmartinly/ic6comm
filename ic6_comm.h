@@ -70,9 +70,9 @@ class IC6Comm : public QMainWindow {
   private:
     Ui::IC6Comm* ui;
 
-    QThreadPool* write_pool;
-    QMap<QString, CommWorker*> devices; // QMap to store workers
-    QMap<QString, QThread*> threads; // QMap to store threads
+    QThreadPool* write_pool_;
+    QMap<QString, CommWorker*> devices_; // QMap to store workers
+    QMap<QString, QThread*> threads_; // QMap to store threads
     QMap<QString, InstConfig*> inst_list_;
     QStringList ip_list_;
     QString ch_data_str_ = "Freq: %1, Act: %2";
