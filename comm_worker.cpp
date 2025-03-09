@@ -193,6 +193,7 @@ void CommWorker::handleConnected() {
 /// \brief CommWorker::handleReadyRead
 ///
 void CommWorker::handleReadyRead() {
+    QString data_tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     QByteArray data;
     while(socket_->bytesAvailable()) {
         data += socket_->readAll();
@@ -200,9 +201,10 @@ void CommWorker::handleReadyRead() {
     if(data.length() < 7) {
         return;
     }
-    QString data_tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     dataHandel(data);
     emit sendData(status_, frequencies_, activities_, target_name_, data_tm);
+    // This is available in all editors.
+    qDebug() << __FUNCTION__ << data_tm;
 }
 
 ///
