@@ -16,8 +16,8 @@ CommWorker::CommWorker(const QString& ip, const QString& name, QObject* parent)
     // 连接信号槽
     connect(socket_, &QTcpSocket::connected, this, &CommWorker::handleConnected);
     connect(socket_, &QTcpSocket::readyRead, this, &CommWorker::handleReadyRead);
-    connect(socket_, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
-            this, &CommWorker::handleError);
+//    connect(socket_, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
+//            this, &CommWorker::handleError);
     connect(timer_, &QTimer::timeout, this, &CommWorker::work);
 }
 
@@ -51,7 +51,7 @@ void CommWorker::stopWork() {
     if(socket_->state() == QTcpSocket::ConnectedState) {
         socket_->disconnectFromHost();
         // This is available in all editors.
-        qDebug() << __FUNCTION__ << socket_->state() << timer_->isActive();
+//        qDebug() << __FUNCTION__ << socket_->state() << timer_->isActive();
     }
 }
 

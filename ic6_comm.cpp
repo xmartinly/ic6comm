@@ -11,7 +11,6 @@ IC6Comm::IC6Comm(QWidget* parent)
     qRegisterMetaType<QList<int>>("QList<int>");
     qRegisterMetaType<QList<double>>("QList<double>");
     setStatusbar();
-    statusBar()->showMessage("ShowMessage", 2000);
     write_pool_ = new QThreadPool(this);
     write_pool_->setMaxThreadCount(QThread::idealThreadCount() / 2);
     readConfig();
@@ -56,7 +55,9 @@ void IC6Comm::on_act_exit_triggered() {
 ///
 void IC6Comm::on_act_man_triggered() {
     QString qtManulFile = "./074-505-P1J IC6 OM.pdf";
-    QDesktopServices::openUrl(QUrl::fromLocalFile(qtManulFile));
+    if(!QDesktopServices::openUrl(QUrl::fromLocalFile(qtManulFile))) {
+        QMessageBox::warning(this, tr("Error"), tr("Can not open file '074-505-P1J IC6 OM.pdf.'"));
+    }
 }
 
 ///
@@ -320,11 +321,11 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
 ///
 bool IC6Comm::instIpCheck(const QString& ip) {
     if(QHostAddress(ip).isNull()) {
-        QMessageBox::warning(this, "Error", "Invalid IP address");
+        QMessageBox::warning(this, tr("Error"), tr("Invalid IP address"));
         return false;
     }
     if(ip_list_.contains(ip)) {
-        QMessageBox::warning(this, "Error", "Duplicate IP address");
+        QMessageBox::warning(this, tr("Error"), tr("Duplicate IP address"));
         return false;
     }
     return true;
@@ -337,11 +338,11 @@ bool IC6Comm::instIpCheck(const QString& ip) {
 ///
 bool IC6Comm::nameCheck(const QString& inst_name) {
     if(inst_name.length() < 2) {
-        QMessageBox::warning(this, "Error", "Name field must be filled in.");
+        QMessageBox::warning(this, tr("Error"), tr("Name field must be filled in."));
         return false;
     }
     if(threads_.contains(inst_name)) {
-        QMessageBox::warning(this, "Error", "Duplicate name.");
+        QMessageBox::warning(this, tr("Error"), tr("Duplicate name."));
         return false;
     }
     return true;
@@ -393,7 +394,7 @@ bool IC6Comm::startAcq(const QString& ip, const QString& inst_name, uint intvl, 
     QString version;
     bool connected = connectTest(ip, &version);
     if(!connected) {
-        QMessageBox::warning(this, "Error", QString("Can't connect to %1").arg(ip));
+        QMessageBox::warning(this, tr("Error"), tr("Can't connect to ") + ip);
         return false;
     }
     // create instrument instacne
