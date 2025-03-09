@@ -23,11 +23,12 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     const int diameter = qMin(width(), height()) * 0.8;
     const int radius = diameter / 2;
     QPoint center = rect().center();
+    bool act_error = w_value < 1 || w_value > 800;
     // 计算颜色
     QColor circleColor;
     int red_val = 255 - red_factor_ * w_value;
     circleColor = QColor(red_val, GREEN_VAL_, BLUE_VAL_);
-    if (w_value < 1) {
+    if (act_error) {
         circleColor = RED_COLOR_;
         // circleColor = QColor(243, 129, 129);
     }
@@ -42,7 +43,7 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     font.setBold(true);
     font.setPixelSize(radius * 1.4);
     painter.setFont(font);
-    if (w_value < 1) {
+    if (act_error) {
         // painter.setPen(QColor(254, 255, 228));
         painter.setPen(GRAY_COLOR_);
     }
