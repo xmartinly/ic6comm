@@ -132,9 +132,9 @@ void CommWorker::dataHandel(const QByteArray& data) {
         return;
     }
     // This is available in all editors.
-    status_ = calcStatus(splitParts.at(0));
-    activities_ = calcInt(splitParts.at(2));
-    frequencies_ = calcFreq(splitParts.at(1));
+    calcStatus(splitParts.at(0));
+    calcInt(splitParts.at(2));
+    calcFreq(splitParts.at(1));
 }
 
 uint CommWorker::calcMsgLen(const QByteArray& len_ba) {
@@ -177,11 +177,11 @@ QByteArray CommWorker::calcMsg(const QByteArray& resp) {
 /// \param resp
 /// \return
 ///
-QList<double> CommWorker::calcFreq(const QByteArray& resp) {
-    QList<double> freq = {};
+void CommWorker::calcFreq(const QByteArray& resp) {
+    frequencies_ = {};
     int resp_len = resp.length();
     if(resp_len % 8) {
-        return freq;
+        return;
     }
     for (int var = 0; var < resp_len; ++var) {
         QByteArray freq_ba = resp.mid(8 * var, 8);
@@ -189,9 +189,8 @@ QList<double> CommWorker::calcFreq(const QByteArray& resp) {
         stream.setByteOrder(QDataStream::LittleEndian);
         qint64 value;
         stream >> value;
-        freq.append( value * factor_ic6);
+        frequencies_.append( value * factor_ic6);
     }
-    return freq;
 }
 
 ///
@@ -199,11 +198,11 @@ QList<double> CommWorker::calcFreq(const QByteArray& resp) {
 /// \param resp
 /// \return
 ///
-QList<int> CommWorker::calcInt(const QByteArray& resp) {
-    QList<int> act = {};
+void CommWorker::calcInt(const QByteArray& resp) {
+    activities_ = {};
     int resp_len = resp.length();
     if(resp_len % 4) {
-        return act;
+        return;
     }
     for (int var = 0; var < resp_len; ++var) {
         QByteArray act_ba = resp.mid(4 * var, 4);
@@ -211,9 +210,8 @@ QList<int> CommWorker::calcInt(const QByteArray& resp) {
         stream.setByteOrder(QDataStream::LittleEndian);
         int value;
         stream >> value;
-        act.append(value);
+        activities_.append(value);
     }
-    return act;
 }
 
 ///
@@ -221,13 +219,11 @@ QList<int> CommWorker::calcInt(const QByteArray& resp) {
 /// \param stat
 /// \return
 ///
-QList<bool> CommWorker::calcStatus(const QByteArray& resp) {
-    QByteArray resp_ = resp.mid(1, -1);
-    QList<bool> status = {};
-    foreach (auto c, resp_) {
-        status.append( (c & 1) == 0);
+void CommWorker::calcStatus(const QByteArray& resp) {
+    status_ = {};
+    foreach (auto c, resp) {
+        status_.append( (c & 1) == 0);
     }
-    return status;
 }
 
 ///

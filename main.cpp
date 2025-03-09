@@ -1,8 +1,9 @@
-#include "ic6_comm.h"
+﻿#include "ic6_comm.h"
 
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+
 
 #ifdef VLD_MODULE
     #include "vld.h"

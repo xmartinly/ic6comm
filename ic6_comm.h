@@ -2,6 +2,7 @@
 #define IC6_COMM_H
 
 #include <QMainWindow>
+#include <QMetaType>
 
 #include "comm_worker.h"
 
@@ -99,14 +100,13 @@ class IC6Comm : public QMainWindow {
     bool startAcq(const QString& ip, const QString& name, uint intvl = 200, const QString& ch = "1");
     void setStatusbar();
     void stopThread(const QString& ip, const QString& name);
-    void dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts);
     void writeData(InstConfig* inst);
-    void setInstLabel(const QString& name, const QList<bool>& status, const QStringList& data);
+    void setChLabel(const QString& name, const QList<bool>& status, const QStringList& data);
     void readConfig();
     void writeConfig();
 
   private slots:
-    void handleDataReceived(const QByteArray& data, const QString& name);
+
     void handleError(const QString& error, const QString& ip);
     void appInfoShow(const QString& msg);
     void writeDataSize(const QString& name, float size);

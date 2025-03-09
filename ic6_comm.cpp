@@ -6,6 +6,9 @@ IC6Comm::IC6Comm(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::IC6Comm) {
     ui->setupUi(this);
+    qRegisterMetaType<QList<bool>>("QList<bool>");
+    qRegisterMetaType<QList<int>>("QList<int>");
+    qRegisterMetaType<QList<double>>("QList<double>");
     // ui->splitter->setStretchFactor(0, 5);
     // ui->splitter->setStretchFactor(1, 7);
     setStatusbar();
@@ -111,10 +114,9 @@ void IC6Comm::on_tb_start2_clicked() {
         ui->le_name2->setDisabled(true);
         ui->cb_intvl2->setDisabled(true);
         ip_list_.append(ip);
-        ui->frame1->setObjectName(name);
-        ui->frame1->setProperty("channel", "2");
+        ui->frame2->setObjectName(name);
+        ui->frame2->setProperty("channel", "2");
     }
-    startAcq(ip, name, intvl, "2");
 }
 
 ///
@@ -149,31 +151,31 @@ void IC6Comm::on_tb_stop2_clicked() {
 /// \param frequencies
 /// \param acts
 ///
-void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts) {
-    if(!inst_list_.contains(name)) {
-        return;
-    }
-    InstConfig* inst = inst_list_.find(name).value();
-    inst->data_count_++;
-    QStringList inst_data_store;
-    QStringList shown_data;
-    int data_cnt = status.count();
-    QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
-    for (int var = 0; var < data_cnt; ++var) {
-        bool state = status.at(var);
-        QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
-        QString s_act = state ? QString::number(acts.at(var)) : "0";
-        QString idx = QString::number((var + 1));
-        shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
-        inst_data_store.append(s_freq);
-        inst_data_store.append(s_act);
-    }
-    setInstLabel(name, status, shown_data);
-    inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
-    if(inst->data_count_ > 50) {
-        writeData(inst);
-    }
-}
+// void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts) {
+//     if(!inst_list_.contains(name)) {
+//         return;
+//     }
+//     InstConfig* inst = inst_list_.find(name).value();
+//     inst->data_count_++;
+//     QStringList inst_data_store;
+//     QStringList shown_data;
+//     int data_cnt = status.count();
+//     QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
+//     for (int var = 0; var < data_cnt; ++var) {
+//         bool state = status.at(var);
+//         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
+//         QString s_act = state ? QString::number(acts.at(var)) : "0";
+//         QString idx = QString::number((var + 1));
+//         shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
+//         inst_data_store.append(s_freq);
+//         inst_data_store.append(s_act);
+//     }
+//     inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
+//     if(inst->data_count_ > 50) {
+//         writeData(inst);
+//     }
+//     setInstLabel(name, status, shown_data);
+// }
 
 ///
 /// \brief IC6Comm::writeData
@@ -189,12 +191,12 @@ void IC6Comm::writeData(InstConfig* inst) {
 }
 
 ///
-/// \brief IC6Comm::setInstLabel
+/// \brief IC6Comm::setChLabel
 /// \param name
 /// \param status
 /// \param data
 ///
-void IC6Comm::setInstLabel(const QString& name, const QList<bool>& status, const QStringList& data) {
+void IC6Comm::setChLabel(const QString& name, const QList<bool>& status, const QStringList& data) {
     auto frame = this->findChild<QFrame*>(name);
     QString ch_s = frame->property("channel").toString();
     int ch_count = status.count();
@@ -281,8 +283,32 @@ void IC6Comm::writeDataSize(const QString& name, float size) {
 }
 
 void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name) {
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << name << status << frequencies << activities;
+    if(!inst_list_.contains(name)) {
+        return;
+    }
+    InstConfig* inst = inst_list_.find(name).value();
+    if(!inst) {
+        return;
+    }
+    inst->data_count_++;
+    QStringList inst_data_store;
+    QStringList shown_data;
+    int data_cnt = status.count();
+    QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
+    for (int var = 0; var < data_cnt; ++var) {
+        bool state = status.at(var);
+        QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
+        QString s_act = state ? QString::number(activities.at(var)) : "0";
+        QString idx = QString::number((var + 1));
+        shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
+        inst_data_store.append(s_freq);
+        inst_data_store.append(s_act);
+    }
+    inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
+    if(inst->data_count_ > 50) {
+        writeData(inst);
+    }
+    setChLabel(name, status, shown_data);
 }
 
 ///
@@ -396,7 +422,6 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     connect(device, &CommWorker::sendData, this, &IC6Comm::getData);
-    // connect(device, &CommWorker::dataReceived, this, &IC6Comm::handleDataReceived);
     connect(device, &CommWorker::errorOccurred, this, &IC6Comm::handleError);
     // store object and thread
     devices.insert(name, device);
@@ -440,26 +465,6 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
     return connected;
 }
 
-///
-/// \brief IC6Comm::handleDataReceived
-/// \param data
-/// \param name
-///
-void IC6Comm::handleDataReceived(const QByteArray& data, const QString& name) {
-    qDebug() << Helper::hexFormat(data);
-    // uint cks   = data.back() & 0xff;
-    // QByteArray msg_len_ba = data.mid(0, 2);
-    // int msg_len = Helper::calcMsgLen(msg_len_ba);
-    // QByteArray msg_body_ba = data.mid(2, msg_len);
-    // auto cks_ = Helper::calcCks(msg_body_ba);
-    // QList<int> l_act;
-    // QList<double> l_freq;
-    // QList<bool> l_stat;
-    // if(cks == cks_) {
-    //     Helper::calcData(msg_body_ba.mid(2, -1), &l_act, &l_freq, &l_stat);
-    // }
-    // dataHandle(name, l_stat, l_freq, l_act);
-}
 
 ///
 /// \brief IC6Comm::handleError

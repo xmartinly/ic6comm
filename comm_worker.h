@@ -49,9 +49,9 @@ class CommWorker: public QObject {
 
   private:
     QByteArray calcMsg(const QByteArray& resp);
-    QList<double> calcFreq(const QByteArray& resp);
-    QList<int> calcInt(const QByteArray& resp);
-    QList<bool> calcStatus(const QByteArray& resp);
+    void calcFreq(const QByteArray& resp);
+    void calcInt(const QByteArray& resp);
+    void calcStatus(const QByteArray& resp);
     void connectToHost();
     void dataHandel(const QByteArray& data);
     uint calcMsgLen(const QByteArray& len_ba);
