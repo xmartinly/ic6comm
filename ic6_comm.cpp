@@ -403,22 +403,22 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     CommWorker* device = new CommWorker(ip, name);
     // move object to thread
     device->moveToThread(thread);
+    // store object and thread
+    devices.insert(name, device);
+    threads.insert(ip, thread);
     // connect signals and slots
-    connect(thread, &QThread::started, device, [this, intvl]() { // use this as the content
-        if (!devices.isEmpty()) {
-            devices.last()->startWork(intvl);
-        }
-    });
     connect(thread, &QThread::finished, device, &CommWorker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     connect(device, &CommWorker::sendData, this, &IC6Comm::getData);
     connect(device, &CommWorker::errorOccurred, this, &IC6Comm::handleError);
-    // store object and thread
-    devices.insert(name, device);
-    threads.insert(ip, thread);
+    connect(thread, &QThread::started, device, [device, intvl]() { // use this as the content
+        // if (!devices.isEmpty()) {
+        //     devices.last()->startWork(intvl);
+        // }
+        device->startWork(intvl);
+    });
     // start thread
     thread->start();
-    // qDebug() << threads.count() << devices.count() << ip_list_;
     return true;
 }
 
@@ -464,4 +464,5 @@ void IC6Comm::handleError(const QString& error, const QString& ip) {
     // This is available in all editors.
     qDebug() << __FUNCTION__ << QString("[%1] error: %2").arg(ip, error);
 }
+
 

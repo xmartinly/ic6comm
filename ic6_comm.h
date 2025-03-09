@@ -95,6 +95,5 @@ class IC6Comm : public QMainWindow {
     void writeDataSize(const QString& name, float size);
     void getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name);
 
-
 };
 #endif // IC6_COMM_H

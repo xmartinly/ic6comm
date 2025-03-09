@@ -40,6 +40,7 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     painter.setPen(Qt::white);
     QFont font = painter.font();
     font.setFamily("Microsoft YaHei UI");
+    // font.setFamily("Microsoft YaHei Mono");
     font.setBold(true);
     font.setPixelSize(radius * 1.4);
     painter.setFont(font);
