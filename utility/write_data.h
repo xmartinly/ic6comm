@@ -20,11 +20,13 @@ class WriteData: public QObject, public QRunnable {
 
   private:
     // data to be written
-    QString data_str;
+    QString data_str_;
     // data file name
-    QString data_file;
+    QString data_file_;
     // inst name
-    QString inst_name;
+    QString inst_name_;
+
+    QString file_name_ = "n/a";
 };
 
 #endif // WRITEDATA_H

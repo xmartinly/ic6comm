@@ -19,6 +19,7 @@ struct InstConfig {
     QString file_name_;
     QString comm_data_;
     uint intvl_;
+    uint write_threshold_;
     uint data_count_ = 0;
     uint data_file_count_ = 0;
     QString first_file_name_ = "";
@@ -43,6 +44,7 @@ struct InstConfig {
             data_file.write(header.toStdString().c_str());
             data_file.close();
         }
+        write_threshold_ = 10000 / intvl_ - 1;
     }
 };
 

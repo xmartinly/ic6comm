@@ -255,7 +255,6 @@ void IC6Comm::appInfoShow(const QString& msg) {
 }
 
 void IC6Comm::writeDataSize(const QString& name, float size) {
-    // This is available in all editors.
     auto inst = inst_list_.find(name).value();
     if(size > 50) {
         inst->data_file_count_++;
@@ -287,18 +286,15 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         bool state = status.at(var);
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
         QString s_act = state ? QString::number(activities.at(var)) : "0";
-        QString idx = QString::number((var + 1));
         shown_data.append(ch_data_str_.arg(s_freq, s_act));
         inst_data_store.append(s_freq);
         inst_data_store.append(s_act);
     }
     inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
-    if(inst->data_count_ > 50) {
+    if(inst->data_count_ > inst->write_threshold_) { // write data every 10 seconds
         writeData(inst);
     }
     setChLabel(name, activities, shown_data);
-    // This is available in all editors.
-    // qDebug() << __FUNCTION__ << activities << frequencies << status;
 }
 
 ///
@@ -388,9 +384,6 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     // create instrument instacne
     InstConfig* inst = new InstConfig();
     auto lbl = this->findChild<QLabel*>(QString("ch%1_%2").arg(ch, "info"));
-    if(lbl) {
-        lbl->setText(QString("Inst%1#: %2, %3, %4").arg(ch, name, version, ip));
-    }
     inst->inst_name_ = name;
     inst->ip_addr_ = ip;
     inst->inst_ver_ = version;
@@ -398,6 +391,10 @@ bool IC6Comm::startAcq(const QString& ip, const QString& name, uint intvl, const
     inst->data_count_ = 0;
     inst->setFileName();
     inst_list_.insert(name, inst);
+    if(lbl) {
+        lbl->setText(QString("Inst%1#: %2, %3, %4").arg(ch, name, version, ip));
+        lbl->setToolTip(QString("Data File: %1").arg(inst->file_name_));
+    }
     // craete communication object and thread
     QThread* thread = new QThread;
     CommWorker* device = new CommWorker(ip, name);
