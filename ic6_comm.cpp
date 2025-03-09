@@ -145,40 +145,6 @@ void IC6Comm::on_tb_stop2_clicked() {
     ui->cb_intvl2->setDisabled(false);
 }
 
-
-///
-/// \brief IC6Comm::dataHandle
-/// \param name
-/// \param status
-/// \param frequencies
-/// \param acts
-///
-// void IC6Comm::dataHandle(const QString& name, const QList<bool>& status, const QList<double> frequencies, const QList<int>& acts) {
-//     if(!inst_list_.contains(name)) {
-//         return;
-//     }
-//     InstConfig* inst = inst_list_.find(name).value();
-//     inst->data_count_++;
-//     QStringList inst_data_store;
-//     QStringList shown_data;
-//     int data_cnt = status.count();
-//     QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
-//     for (int var = 0; var < data_cnt; ++var) {
-//         bool state = status.at(var);
-//         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
-//         QString s_act = state ? QString::number(acts.at(var)) : "0";
-//         QString idx = QString::number((var + 1));
-//         shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
-//         inst_data_store.append(s_freq);
-//         inst_data_store.append(s_act);
-//     }
-//     inst->comm_data_.append(tm + "," + inst_data_store.join(",") + "\n");
-//     if(inst->data_count_ > 50) {
-//         writeData(inst);
-//     }
-//     setInstLabel(name, status, shown_data);
-// }
-
 ///
 /// \brief IC6Comm::writeData
 /// \param inst
@@ -321,7 +287,7 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
         QString s_act = state ? QString::number(activities.at(var)) : "0";
         QString idx = QString::number((var + 1));
-        shown_data.append(QString("CH%1: Freq: %2, Act: %3").arg(idx, s_freq, s_act));
+        shown_data.append(QString("Freq: %2, Act: %3").arg(s_freq, s_act));
         inst_data_store.append(s_freq);
         inst_data_store.append(s_act);
     }

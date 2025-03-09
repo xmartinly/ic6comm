@@ -193,14 +193,12 @@ void CommWorker::handleConnected() {
 /// \brief CommWorker::handleReadyRead
 ///
 void CommWorker::handleReadyRead() {
-    // socket_->waitForReadyRead(100);
     QByteArray data = socket_->readAll();
     status_ = {};
     activities_ = {};
     frequencies_ = {};
     dataHandel(data);
     emit sendData(status_, frequencies_, activities_, target_name_);
-    // emit dataReceived(data, targetName); // 转发数据到主线程
 }
 
 ///
