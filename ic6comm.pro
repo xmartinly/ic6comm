@@ -34,7 +34,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 PRECOMPILED_HEADER = stable.h
 
-QMAKE_CXXFLAGS += /MP
+#QMAKE_CXXFLAGS += /MP
 
 RC_ICONS = logo.ico
 

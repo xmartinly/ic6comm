@@ -29,11 +29,6 @@ IC6Comm::~IC6Comm() {
         QString name = inst->inst_name_;
         stopThread(name);
     }
-    // foreach (auto thread, threads_) {
-    //     thread->exit();
-    //     thread->wait();
-    //     delete thread;
-    // }
     delete ui;
 }
 
@@ -49,11 +44,8 @@ void IC6Comm::on_act_exit_triggered() {
 /// \brief IC6Comm::on_act_man_triggered
 ///
 void IC6Comm::on_act_man_triggered() {
-    // QString qtManulFile = "./074-505-P1J IC6 OM.pdf";
     QString ic6_url = "https://www.inficon.com/en/products/thin-film-technology/ic6";
-    if(!QDesktopServices::openUrl(QUrl::fromLocalFile(ic6_url))) {
-        QMessageBox::warning(this, "Error", "Can not open file '074-505-P1J IC6 OM.pdf.'");
-    }
+    QDesktopServices::openUrl(QUrl::fromLocalFile(ic6_url));
 }
 
 ///
