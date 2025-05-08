@@ -413,7 +413,7 @@ void IC6Comm::stopThread( const QString& inst_name) {
 /// \brief IC6Comm::setStatusbar
 ///
 void IC6Comm::setStatusbar() {
-    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.0.4", this);
+    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.1.1", this);
     statusBar()->addPermanentWidget(labCellIndex);
 }
 

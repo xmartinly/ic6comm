@@ -91,6 +91,7 @@ class IC6Comm : public QMainWindow {
         "2025/03/07 v1.0.3 \tChange crystal icon to dynamic widget.",
         "2025/03/08 v1.0.4 \tRedesign UI.",
         "2025/03/09 v1.1.0 \tRelease the first version. Connect function bug fixed.",
+        "2025/05/04 v1.1.1 \tCustom data store format.",
     };
 
 
