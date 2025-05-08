@@ -120,6 +120,7 @@ void IC6Comm::on_tb_stop1_clicked() {
 void IC6Comm::on_tb_stop2_clicked() {
     QString ip = ui->wd_ip2->getIP();
     QString name = ui->le_name2->text();
+//    this->startAcq();
     stopThread(name);
     ui->wd_ip2->setDisabled(false);
     ui->le_name2->setDisabled(false);
@@ -307,6 +308,7 @@ void IC6Comm::getConnErr(const QString& name) {
 /// \param name
 ///
 void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm) {
+    Q_UNUSED(data_tm);
     if(!inst_list_.contains(name)) {
         return;
     }
@@ -315,19 +317,25 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         return;
     }
     inst->data_count_++;
+    inst->data_run_count_++;
     QStringList inst_data_store;
     QStringList shown_data;
     int data_cnt = status.count();
     // QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     for (int var = 0; var < data_cnt; ++var) {
         bool state = status.at(var);
-        QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "0";
+        QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "000.000";
         QString s_act = state ? QString::number(activities.at(var)) : "0";
         shown_data.append(ch_data_str_.arg(s_freq, s_act));
         inst_data_store.append(s_freq);
         inst_data_store.append(s_act);
     }
-    inst->comm_data_.append(data_tm + "," + inst_data_store.join(",") + "\n");
+//    inst->comm_data_.append(data_tm + "," + inst_data_store.join(",") + "\n");
+    QDateTime now = QDateTime::currentDateTime();
+    inst_data_store.append(now.toString("MM/dd/yyyy"));
+    inst_data_store.append(now.toString("hh:mm:ss"));
+    inst_data_store.prepend(QString::number(inst->data_run_count_));
+    inst->comm_data_.append(inst_data_store.join(",") + "\n");
     if(inst->data_count_ > inst->write_threshold_) { // write data every 10 seconds
         writeData(inst);
     }

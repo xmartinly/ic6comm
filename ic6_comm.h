@@ -24,26 +24,31 @@ struct InstConfig {
     uint write_threshold_;
     uint data_count_ = 0;
     uint data_file_count_ = 0;
+    quint64 data_run_count_ = 0;
     QString first_file_name_ = "";
-    QString file_header_ = "Name:,%1\nIP:,%2\nVersion:,%3\nInterval:,%4\nStartTime:,%5\nData:\nTime,Frequency1,Act1,Frequency2,Act2,Frequency3,Act3,Frequency4,Act4,Frequency5,Act5,Frequency6,Act6,Frequency7,Act7,Frequency8,Act8\n";
+//    QString file_header_ = "Name:,%1\nIP:,%2\nVersion:,%3\nInterval:,%4\nStartTime:,%5\nData:\nTime,Frequency1,Act1,Frequency2,Act2,Frequency3,Act3,Frequency4,Act4,Frequency5,Act5,Frequency6,Act6,Frequency7,Act7,Frequency8,Act8\n";
+    QString file_header_ = QString("IC6 Data Log %1\n").arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss"));
     void setFileName() {
-        QDateTime start_tm = QDateTime::currentDateTime();
-        QString tm1 = start_tm.toString("yyyy-MM-dd hh:mm:ss");
-        QString tm2 = start_tm.toString("yyyyMMdd_hhmmss");
-        if(!first_file_name_.isEmpty() && data_file_count_ > 0) {
-            file_name_ = first_file_name_ + ("_" + QString::number(data_file_count_) + ".csv");
-        } else {
-            QString _file = QString("%1/data/%2_%3");
-            first_file_name_ = _file.arg(
-                                   QDir::currentPath(),
-                                   tm2,
-                                   inst_name_);
-            file_name_ = first_file_name_ + ".csv";
-        }
-        QString header = file_header_.arg(inst_name_, ip_addr_, inst_ver_, QString::number(intvl_), tm1);
+//        QDateTime start_tm = QDateTime::currentDateTime();
+//        QString tm1 = start_tm.toString("yyyy-MM-dd hh:mm:ss");
+//        QString tm2 = start_tm.toString("yyyyMMdd_hhmmss");
+//        if(!first_file_name_.isEmpty() && data_file_count_ > 0) {
+//            file_name_ = first_file_name_ + ("_" + QString::number(data_file_count_) + ".txt");
+//        } else {
+//            QString _file = QString("%1/data/%2_%3");
+//            first_file_name_ = _file.arg(
+//                                   QDir::currentPath(),
+//                                   tm2,
+//                                   inst_name_);
+//            file_name_ = first_file_name_ + ".txt";
+//        }
+//        QString header = file_header_.arg(inst_name_, ip_addr_, inst_ver_, QString::number(intvl_), tm1);
+        QString _file = QString("%1/data/%2.txt");
+        file_name_ = _file.arg(QDir::currentPath(), inst_name_);
+        qDebug() << file_name_;
         QFile data_file = QFile(file_name_);
-        if(data_file.open(QIODevice::WriteOnly)) {
-            data_file.write(header.toStdString().c_str());
+        if(data_file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+            data_file.write(file_header_.toStdString().c_str());
             data_file.close();
         }
         write_threshold_ = 10000 / intvl_ - 1;
