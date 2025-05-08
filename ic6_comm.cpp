@@ -319,6 +319,8 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
     inst->data_count_++;
     inst->data_run_count_++;
     QStringList inst_data_store;
+    QStringList data_freq;
+    QStringList data_act;
     QStringList shown_data;
     int data_cnt = status.count();
     // QString tm = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
@@ -327,11 +329,13 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         QString s_freq = state ? QString::number(frequencies.at(var), 'f', 3) : "000.000";
         QString s_act = state ? QString::number(activities.at(var)) : "0";
         shown_data.append(ch_data_str_.arg(s_freq, s_act));
-        inst_data_store.append(s_freq);
-        inst_data_store.append(s_act);
+        data_freq.append(s_freq);
+        data_act.append(s_act);
     }
 //    inst->comm_data_.append(data_tm + "," + inst_data_store.join(",") + "\n");
     QDateTime now = QDateTime::currentDateTime();
+    inst_data_store.append(data_freq.join(","));
+    inst_data_store.append(data_act.join(","));
     inst_data_store.append(now.toString("MM/dd/yyyy"));
     inst_data_store.append(now.toString("hh:mm:ss"));
     inst_data_store.prepend(QString::number(inst->data_run_count_));
