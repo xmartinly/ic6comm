@@ -92,6 +92,7 @@ class IC6Comm : public QMainWindow {
         "2025/03/08 v1.0.4 \tRedesign UI.",
         "2025/03/09 v1.1.0 \tRelease the first version. Connect function bug fixed.",
         "2025/05/04 v1.1.1 \tCustom data store format.",
+        "2025/06/19 v1.1.2 \tFix connection issue after disconnect from instrument.",
     };
 
 

@@ -397,7 +397,7 @@ void IC6Comm::stopThread( const QString& inst_name) {
     if(threads_.contains(inst_name)) {
         auto thread = threads_.find(inst_name).value();
         thread->exit();
-        thread->wait(100);
+        thread->wait();
         threads_.remove(inst_name);
         delete thread;
     }
@@ -413,7 +413,7 @@ void IC6Comm::stopThread( const QString& inst_name) {
 /// \brief IC6Comm::setStatusbar
 ///
 void IC6Comm::setStatusbar() {
-    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.1.1", this);
+    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.1.2", this);
     statusBar()->addPermanentWidget(labCellIndex);
 }
 
@@ -460,9 +460,6 @@ bool IC6Comm::startAcq(const QString& ip, const QString& inst_name, uint intvl, 
     connect(device, &CommWorker::sendData, this, &IC6Comm::getData);
     connect(device, &CommWorker::errorOccurred, this, &IC6Comm::handleError);
     connect(thread, &QThread::started, device, [device, intvl]() { // use this as the content
-        // if (!devices.isEmpty()) {
-        //     devices.last()->startWork(intvl);
-        // }
         device->startWork(intvl);
     });
     // start thread
@@ -511,6 +508,7 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
 void IC6Comm::handleError(const QString& error, const QString& ip) {
     // This is available in all editors.
     qDebug() << __FUNCTION__ << QString("[%1] error: %2").arg(ip, error);
+    statusBar()->showMessage(QString("[%1] error: %2").arg(ip, error), 3000);
 }
 
 
