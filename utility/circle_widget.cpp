@@ -26,7 +26,7 @@ void CircleWidget::paintEvent(QPaintEvent*) {
     bool act_error = w_value < 1 || w_value > 800;
     // 计算颜色
     QColor circleColor;
-    int red_val = 255 - red_factor_ * w_value;
+    int red_val = 255 - RED_FACTOR_ * w_value;
     circleColor = QColor(red_val, GREEN_VAL_, BLUE_VAL_);
     if (act_error) {
         circleColor = RED_COLOR_;

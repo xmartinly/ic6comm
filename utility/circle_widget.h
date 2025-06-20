@@ -17,11 +17,9 @@ class CircleWidget : public QWidget {
     int w_index_ = 0;    // 显示的数字（固定）
     int w_value = 0;     // 控制颜色的值
 
-    QPoint center_;
-    const qreal red_factor_ = 0.31875;
+    const qreal RED_FACTOR_ = 0.31875;
     const int GREEN_VAL_ = 160;
     const int BLUE_VAL_ = 0;
-    int red_val_ = 0;
     const QColor RED_COLOR_ = QColor::fromRgb(204, 51, 0);
     const QColor GRAY_COLOR_ = QColor::fromRgb(230, 230, 230);
 

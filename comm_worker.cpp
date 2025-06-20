@@ -50,8 +50,6 @@ void CommWorker::stopWork() {
     timer_->stop();
     if(socket_->state() == QTcpSocket::ConnectedState) {
         socket_->disconnectFromHost();
-        // This is available in all editors.
-//        qDebug() << __FUNCTION__ << socket_->state() << timer_->isActive();
     }
 }
 
@@ -193,7 +191,6 @@ void CommWorker::calcStatus(const QByteArray& resp) {
 ///
 void CommWorker::handleConnected() {
     is_connected_ = true;
-    // qDebug() << "Connected to" << targetIp;
 }
 
 ///

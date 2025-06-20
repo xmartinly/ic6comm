@@ -19,8 +19,6 @@ IC6Comm::IC6Comm(QWidget* parent)
         data_dir.mkpath(".");
     }
     initCirWidget();
-    // This is available in all editors.
-    // qDebug() << __FUNCTION__ << calcChannels(0x14);
 }
 
 IC6Comm::~IC6Comm() {
@@ -106,7 +104,7 @@ void IC6Comm::on_tb_start2_clicked() {
 /// \brief IC6Comm::on_tb_stop1_clicked
 ///
 void IC6Comm::on_tb_stop1_clicked() {
-    QString ip = ui->wd_ip1->getIP();
+    // QString ip = ui->wd_ip1->getIP();
     QString name = ui->le_name1->text();
     stopThread(name);
     ui->wd_ip1->setDisabled(false);
@@ -118,9 +116,8 @@ void IC6Comm::on_tb_stop1_clicked() {
 /// \brief IC6Comm::on_tb_stop2_clicked
 ///
 void IC6Comm::on_tb_stop2_clicked() {
-    QString ip = ui->wd_ip2->getIP();
+    // QString ip = ui->wd_ip2->getIP();
     QString name = ui->le_name2->text();
-//    this->startAcq();
     stopThread(name);
     ui->wd_ip2->setDisabled(false);
     ui->le_name2->setDisabled(false);
@@ -281,8 +278,6 @@ void IC6Comm::writeDataSize(const QString& name, float size) {
 /// \param name
 ///
 void IC6Comm::getConnErr(const QString& name) {
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << name;
     InstConfig* inst = inst_list_.find(name).value();
     if(inst) {
         QMessageBox::warning(this, "Error", "Instrument connect error after 10 tries.");
@@ -506,8 +501,6 @@ bool IC6Comm::connectTest(const QString& ip, QString* version) {
 /// \param ip
 ///
 void IC6Comm::handleError(const QString& error, const QString& ip) {
-    // This is available in all editors.
-    qDebug() << __FUNCTION__ << QString("[%1] error: %2").arg(ip, error);
     statusBar()->showMessage(QString("[%1] error: %2").arg(ip, error), 3000);
 }
 

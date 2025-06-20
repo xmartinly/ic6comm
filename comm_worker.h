@@ -4,31 +4,16 @@
 #include <QObject>
 #include <QWidget>
 
-// struct CygInst {
-//     QString ip_;
-//     QString name_;
-//     uint acq_interval_;
-//     QByteArray ba_cmd_;
-//     QString last_data_tm_;
-//     QStringList status_;
-//     QStringList frequencies_;
-//     QStringList activities_;
-//     //
-//     bool is_connected_;
-// };
-
 class CommWorker: public QObject {
     Q_OBJECT
   public:
     explicit CommWorker(const QString& ip, const QString& name, QObject* parent = nullptr);
     ~CommWorker();
-
     void startWork(int interval);  // start timer
     void stopWork();               // stop task
 
   signals:
     void connectError(const QString& name);
-    void dataReceived(const QByteArray& data, const QString& ip); // data receive signal
     void errorOccurred(const QString& error, const QString& ip);  // error signal
     void sendData(const QList<bool>& status, const QList<double>& frequencies, const QList<int>& activities, const QString& name, const QString& data_tm);
 
@@ -39,7 +24,6 @@ class CommWorker: public QObject {
     void handleConnected();
     void handleReadyRead();
     void handleError(QAbstractSocket::SocketError error);
-
 
   private:
     QTcpSocket* socket_;

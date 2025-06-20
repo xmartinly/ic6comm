@@ -25,7 +25,6 @@ class WriteData: public QObject, public QRunnable {
     QString data_file_;
     // inst name
     QString inst_name_;
-
     QString file_name_ = "n/a";
 };
 
