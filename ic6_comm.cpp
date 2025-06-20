@@ -7,10 +7,6 @@ IC6Comm::IC6Comm(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::IC6Comm) {
     ui->setupUi(this);
-    qRegisterMetaType<QList<bool>>("QList<bool>");
-    qRegisterMetaType<QList<int>>("QList<int>");
-    qRegisterMetaType<QList<double>>("QList<double>");
-    setStatusbar();
     write_pool_ = new QThreadPool(this);
     write_pool_->setMaxThreadCount(QThread::idealThreadCount() / 2);
     readConfig();
@@ -19,6 +15,7 @@ IC6Comm::IC6Comm(QWidget* parent)
         data_dir.mkpath(".");
     }
     initCirWidget();
+    statusBar()->addPermanentWidget(version_str_);
 }
 
 IC6Comm::~IC6Comm() {
@@ -255,7 +252,6 @@ uint IC6Comm::calcChannels(uint chs) {
     }
     return ch_count_ * 2;
 }
-\
 
 ///
 /// \brief VgcComm::appInfoShow. 状态栏显示信息槽函数.
@@ -265,6 +261,11 @@ void IC6Comm::appInfoShow(const QString& msg) {
     statusBar()->showMessage(msg, 3000);
 }
 
+///
+/// \brief IC6Comm::writeDataSize
+/// \param name
+/// \param size
+///
 void IC6Comm::writeDataSize(const QString& name, float size) {
     auto inst = inst_list_.find(name).value();
     if(size > 50) {
@@ -327,7 +328,6 @@ void IC6Comm::getData(const QList<bool>& status, const QList<double>& frequencie
         data_freq.append(s_freq);
         data_act.append(s_act);
     }
-//    inst->comm_data_.append(data_tm + "," + inst_data_store.join(",") + "\n");
     QDateTime now = QDateTime::currentDateTime();
     inst_data_store.append(data_freq.join(","));
     inst_data_store.append(data_act.join(","));
@@ -402,14 +402,6 @@ void IC6Comm::stopThread( const QString& inst_name) {
     if(ip_list_.contains(ip)) {
         ip_list_.removeOne(ip);
     }
-}
-
-///
-/// \brief IC6Comm::setStatusbar
-///
-void IC6Comm::setStatusbar() {
-    QLabel* labCellIndex = new QLabel("IC/6 data logger. v1.1.2", this);
-    statusBar()->addPermanentWidget(labCellIndex);
 }
 
 ///

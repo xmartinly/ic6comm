@@ -5,7 +5,7 @@
 #include <QMetaType>
 
 #include "comm_worker.h"
-#include "qthreadpool.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -84,13 +84,13 @@ class IC6Comm : public QMainWindow {
         "2025/05/04 v1.1.1 \tCustom data store format.",
         "2025/06/19 v1.1.2 \tFix connection issue after disconnect from instrument.",
     };
+    QLabel* version_str_ = new QLabel("IC/6 data logger. v1.1.2", this);
 
   private:
     bool connectTest(const QString& ip, QString* version);
     bool instIpCheck(const QString& ip);
     bool nameCheck(const QString& inst_name);
     bool startAcq(const QString& ip, const QString& inst_name, uint intvl = 200, const QString& ch = "1");
-    void setStatusbar();
     void stopThread(const QString& inst_name);
     void writeData(InstConfig* inst);
     void setChLabel(const QString& name, const QList<int>& act, const QStringList& data);

@@ -128,8 +128,6 @@ void CommWorker::dataHandel(const QByteArray& data) {
     calcInt(splitParts.at(2));
 }
 
-
-
 ///
 /// \brief CommWorker::calcFreq
 /// \param resp
@@ -158,7 +156,7 @@ void CommWorker::calcFreq(const QByteArray& resp) {
 /// \return
 ///
 void CommWorker::calcInt(const QByteArray& resp) {
-    activities_ .clear();
+    activities_.clear();
     int resp_len = resp.length();
     int act_ba_len = resp_len / 4;
     if(resp_len % 4) {
