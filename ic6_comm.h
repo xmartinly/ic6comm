@@ -5,6 +5,7 @@
 #include <QMetaType>
 
 #include "comm_worker.h"
+#include "qthreadpool.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
